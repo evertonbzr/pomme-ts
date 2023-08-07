@@ -1,0 +1,29 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "incremental": true,
+    "outDir": "./dist/",
+    "target": "ES6",
+    "lib": ["ESNext"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "pretty": true,
+    "declaration": true,
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "baseUrl": "."
+  },
+  "include": ["src/**/*.ts", "src/**/*.js", "./.eslintrc.cjs", "index.ts"],
+  "exclude": ["dist", "node_modules"],
+  "ts-node": {
+    "transpileOnly": true
+  }
+}
