@@ -22,7 +22,7 @@ const { MakeServer, MakeController, makeField } = require('pomme-ts');
 
 const app = express();
 
-const listTodos = makeField({
+const listTodos = makeField.get({
     key: 'listTodos',
     async resolve(input, ctx) {
         return [
@@ -40,7 +40,7 @@ const todoController = MakeController()
 
 const controllers = [todoController];
 
-MakeServe().setApp(app).setControllers(controllers).build();
+MakeServer().setApp(app).setControllers(controllers).build();
 // Inicie o servidor
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000.');
