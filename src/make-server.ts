@@ -89,10 +89,8 @@ class _MakeServer {
       generator.setPaths(formatedPaths).build();
     }
 
-    this.app.use(this.prefix, ...this.middlewares);
-
     for (const route of routes) {
-      this.app.use(route);
+      this.app.use(this.prefix, ...this.middlewares, route);
     }
 
     return this;
