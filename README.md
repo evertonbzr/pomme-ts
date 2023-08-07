@@ -6,8 +6,6 @@ O PommeTS é uma biblioteca JavaScript que fornece uma maneira simples e eficien
 
 Para começar a usar o PommeTS em seu projeto, você pode instalá-lo usando o npm ou yarn:
 
-### Ainda não publicado
-
 ```bash
 npm install pomme-ts
 # ou
