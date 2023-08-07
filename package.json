@@ -1,10 +1,10 @@
 {
-  "name": "pomme",
+  "name": "pomme-ts",
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "tsc",
     "start": "nodemon"
