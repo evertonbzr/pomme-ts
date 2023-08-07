@@ -22,6 +22,7 @@ const { MakeServer, MakeController, makeField } = require('pomme-ts');
 
 const app = express();
 
+// implementação da rota
 const listTodos = makeField.get({
     key: 'listTodos',
     async resolve(input, ctx) {
@@ -33,6 +34,7 @@ const listTodos = makeField.get({
     },
 });
 
+// agrupamento de rotas pelo controller
 const todoController = MakeController()
     .setPath('/todo')
     .setFields([listTodos])
@@ -40,6 +42,7 @@ const todoController = MakeController()
 
 const controllers = [todoController];
 
+// agrupamento de controllers configurando direto no app
 MakeServer().setApp(app).setControllers(controllers).build();
 // Inicie o servidor
 app.listen(3000, () => {
