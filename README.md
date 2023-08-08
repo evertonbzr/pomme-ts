@@ -17,36 +17,45 @@ yarn add pomme-ts
 Here's a basic example of how to create a route using PommeTS:
 
 ```javascript
-const express = require('express');
-const { MakeServer, MakeController, makeField } = require('pomme-ts');
+import {
+  MakeController,
+  MakeServer,
+  generateRoutesOutput,
+  makeField,
+} from './index';
+import express from 'express';
 
 const app = express();
 
-// Route implementation
 const listTodos = makeField.get({
-    key: 'listTodos',
-    async resolve(input, ctx) {
-        return [
-            {
-                title: 'Todo',
-            },
-        ];
-    },
+  key: 'listTodos',
+  async resolve({ body }, ctx) {
+    return [
+      {
+        title: 'Todo',
+      },
+    ];
+  },
 });
 
-// Route grouping by controller
-const todoController = MakeController()
-    .setPath('/todo')
-    .setFields([listTodos])
-    .build();
+const todoController = MakeController.create()
+  .withPath('/todo')
+  .withFields([listTodos])
+  .build();
 
 const controllers = [todoController];
 
-// Grouping controllers by configuring directly on the app
-MakeServer().setApp(app).setControllers(controllers).build();
-// Start the server
+const serverOne = MakeServer.create()
+  .withApp(app)
+  .withPrefix('/v1')
+  .withControllers(controllers)
+  .build();
+
+//Optional
+generateRoutesOutput(serverOne);
+
 app.listen(3000, () => {
-    console.log('Server running on port 3000.');
+  console.log('Server is running on port 3000');
 });
 ```
 
@@ -54,10 +63,10 @@ app.listen(3000, () => {
 
 PommeTS offers the following features:
 
--   Creation of simple and expressive routes for APIs based on HTTP operations (GET, POST, PUT, DELETE, etc.).
--   Support for handling route parameters, query strings, and middlewares.
--   Organized structure to facilitate code maintenance and expansion.
--   Possibility to group routes by controllers.
+- Creation of simple and expressive routes for APIs based on HTTP operations (GET, POST, PUT, DELETE, etc.).
+- Support for handling route parameters, query strings, and middlewares.
+- Organized structure to facilitate code maintenance and expansion.
+- Possibility to group routes by controllers.
 
 ## Contributing
 

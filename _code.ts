@@ -3,7 +3,6 @@ import {
   MakeServer,
   generateRoutesOutput,
   makeField,
-  merge,
 } from './index';
 import express from 'express';
 
@@ -20,7 +19,6 @@ const listTodos = makeField.get({
   },
 });
 
-// Route grouping by controller
 const todoController = MakeController.create()
   .withPath('/todo')
   .withFields([listTodos])
