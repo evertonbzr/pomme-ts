@@ -1,20 +1,20 @@
-# PommeTS - Router Builder para APIs com Express.js
+# PommeTS - Router Builder for APIs with Express.js
 
-O PommeTS é uma biblioteca JavaScript que fornece uma maneira simples e eficiente de criar rotas para APIs em aplicações Express.js.
+PommeTS is a JavaScript library that provides a simple and efficient way to create routes for APIs in Express.js applications.
 
-## Instalação
+## Installation
 
-Para começar a usar o PommeTS em seu projeto, você pode instalá-lo usando o npm ou yarn:
+To start using PommeTS in your project, you can install it using npm or yarn:
 
 ```bash
 npm install pomme-ts
-# ou
+# or
 yarn add pomme-ts
 ```
 
-## Como usar
+## How to Use
 
-Aqui está um exemplo básico de como criar uma rota usando o PommeTS:
+Here's a basic example of how to create a route using PommeTS:
 
 ```javascript
 const express = require('express');
@@ -22,7 +22,7 @@ const { MakeServer, MakeController, makeField } = require('pomme-ts');
 
 const app = express();
 
-// implementação da rota
+// Route implementation
 const listTodos = makeField.get({
     key: 'listTodos',
     async resolve(input, ctx) {
@@ -34,7 +34,7 @@ const listTodos = makeField.get({
     },
 });
 
-// agrupamento de rotas pelo controller
+// Route grouping by controller
 const todoController = MakeController()
     .setPath('/todo')
     .setFields([listTodos])
@@ -42,31 +42,31 @@ const todoController = MakeController()
 
 const controllers = [todoController];
 
-// agrupamento de controllers configurando direto no app
+// Grouping controllers by configuring directly on the app
 MakeServer().setApp(app).setControllers(controllers).build();
-// Inicie o servidor
+// Start the server
 app.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000.');
+    console.log('Server running on port 3000.');
 });
 ```
 
-## Recursos
+## Features
 
-O PommeTS oferece os seguintes recursos:
+PommeTS offers the following features:
 
--   Criação de rotas simples e expressivas para APIs com base nas operações HTTP (GET, POST, PUT, DELETE, etc.).
--   Suporte para manipulação de parâmetros de rota, query strings e middlewares.
--   Estrutura organizada para facilitar a manutenção e expansão do código.
--   Possibilidade de agrupar rotas por controladores.
+-   Creation of simple and expressive routes for APIs based on HTTP operations (GET, POST, PUT, DELETE, etc.).
+-   Support for handling route parameters, query strings, and middlewares.
+-   Organized structure to facilitate code maintenance and expansion.
+-   Possibility to group routes by controllers.
 
-## Contribuindo
+## Contributing
 
-Se você quiser contribuir para o projeto, fique à vontade para abrir um pull request. Sinta-se à vontade para relatar problemas ou solicitar novos recursos por meio das Issues.
+If you'd like to contribute to the project, feel free to open a pull request. Please feel free to report issues or request new features through Issues.
 
-## Licença
+## License
 
-O PommeTS é licenciado sob a [MIT License](https://opensource.org/licenses/MIT).
+PommeTS is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
 
-Esperamos que o PommeTS facilite a construção de APIs em suas aplicações Express.js. Se tiver alguma dúvida ou precisar de ajuda, não hesite em entrar em contato conosco. Agradecemos o seu interesse em usar o PommeTS!
+We hope that PommeTS makes building APIs in your Express.js applications easier. If you have any questions or need assistance, don't hesitate to get in touch with us. We appreciate your interest in using PommeTS!
