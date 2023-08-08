@@ -2,14 +2,11 @@ import { Express, RequestHandler } from 'express';
 import { Controller } from './types';
 import { Generator } from './generator';
 
-class _MakeServer {
+export class MakeServer {
   private prefix: string;
-
   private app: Express;
-
   private controllers: Controller[];
   private middlewares: RequestHandler[];
-
   private gen: boolean;
 
   constructor() {
@@ -20,28 +17,32 @@ class _MakeServer {
     this.middlewares = [];
   }
 
-  setPrefix(prefix: string): _MakeServer {
+  static create() {
+    return new MakeServer();
+  }
+
+  withPrefix(prefix: string) {
     this.prefix = prefix;
     return this;
   }
 
-  activateGenerator(): _MakeServer {
-    this.gen = true;
-    return this;
-  }
-
-  setApp(app: Express): _MakeServer {
+  withApp(app: Express) {
     this.app = app;
     return this;
   }
 
-  setControllers(controllers: Controller[]): _MakeServer {
+  withControllers(controllers: Controller[]) {
     this.controllers = controllers;
     return this;
   }
 
-  setMiddlewares(middlewares: RequestHandler[]): _MakeServer {
+  withMiddlewares(middlewares: RequestHandler[]) {
     this.middlewares = middlewares;
+    return this;
+  }
+
+  activateGenerator() {
+    this.gen = true;
     return this;
   }
 
@@ -96,5 +97,3 @@ class _MakeServer {
     return this;
   }
 }
-
-export const MakeServer = () => new _MakeServer();
