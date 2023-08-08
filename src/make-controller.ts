@@ -2,21 +2,17 @@ import { RequestHandler, Router } from 'express';
 import { Field } from './types';
 import zodToJsonSchema from 'zod-to-json-schema';
 
-export class MakeController {
+class _MakeController {
   private path: string;
   private fields: Field[];
   private middleware: RequestHandler[];
   private router: Router;
 
-  private constructor() {
+  constructor() {
     this.path = undefined;
     this.fields = [];
     this.middleware = [];
     this.router = Router();
-  }
-
-  static create() {
-    return new MakeController();
   }
 
   withPath(path: string) {
@@ -77,5 +73,11 @@ export class MakeController {
       paths: fieldsPaths,
       fields: fieldsSorted,
     };
+  }
+}
+
+export class MakeController {
+  static create() {
+    return new _MakeController();
   }
 }

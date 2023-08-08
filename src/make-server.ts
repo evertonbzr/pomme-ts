@@ -2,7 +2,7 @@ import { Express, RequestHandler } from 'express';
 import { Controller } from './types';
 import { Generator } from './generator';
 
-export class MakeServer {
+class _MakeServer {
   private prefix: string;
   private app: Express;
   private controllers: Controller[];
@@ -15,10 +15,6 @@ export class MakeServer {
     this.app = undefined;
     this.controllers = [];
     this.middlewares = [];
-  }
-
-  static create() {
-    return new MakeServer();
   }
 
   withPrefix(prefix: string) {
@@ -95,5 +91,11 @@ export class MakeServer {
     }
 
     return this;
+  }
+}
+
+export class MakeServer {
+  static create() {
+    return new _MakeServer();
   }
 }
