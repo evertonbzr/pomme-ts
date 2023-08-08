@@ -2,8 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'node:crypto';
 import { BinaryToTextEncoding } from 'crypto';
+import { Path, ServerBuildType } from './types';
 
-export class Generator {
+class Generator {
   private dirPath: string;
   private folderName: string;
   private paths: string[];
@@ -65,4 +66,24 @@ export class Generator {
   }
 }
 
-export default () => new Generator();
+export function generateRoutesOutput(server: ServerBuildType) {
+  const generator = new Generator();
+
+  const { paths, prefix } = server;
+
+  const formatedPaths = paths.map((path) => {
+    const req = `<@req>${path.req}</@req>`;
+    const route = `<@route>${prefix}${path.route}</@route>`;
+    const key = `<@key>${path.key}</@key>`;
+    const bodySchema = path.bodySchema
+      ? `<@body>${path.bodySchema}</@body>`
+      : '';
+    const querySchema = path.querySchema
+      ? `<@query>${path.querySchema}</@query>`
+      : '';
+
+    return `${key}${req}${route}${bodySchema}${querySchema}`;
+  });
+
+  generator.setPaths(formatedPaths).build();
+}

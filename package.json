@@ -7,7 +7,7 @@
   "private": false,
   "scripts": {
     "build": "tsc",
-    "start": "nodemon"
+    "start": "nodemon ./_code.ts"
   },
   "keywords": [
     "typescript",

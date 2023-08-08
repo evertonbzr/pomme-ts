@@ -1,12 +1,17 @@
-import { MakeController, MakeServer, makeField } from './index';
+import {
+  MakeController,
+  MakeServer,
+  generateRoutesOutput,
+  makeField,
+  merge,
+} from './index';
 import express from 'express';
 
 const app = express();
 
-// Route implementation
 const listTodos = makeField.get({
   key: 'listTodos',
-  async resolve(input, ctx) {
+  async resolve({ body }, ctx) {
     return [
       {
         title: 'Todo',
@@ -23,8 +28,13 @@ const todoController = MakeController.create()
 
 const controllers = [todoController];
 
-// Grouping controllers by configuring directly on the app
-MakeServer.create().withApp(app).withControllers(controllers).build();
+const serverOne = MakeServer.create()
+  .withApp(app)
+  .withPrefix('/v1')
+  .withControllers(controllers)
+  .build();
+
+generateRoutesOutput(serverOne);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

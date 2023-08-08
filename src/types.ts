@@ -42,15 +42,17 @@ export interface FieldArgs<K = any> {
 
 export type OmitFieldArgs = Omit<FieldArgs, 'reqType'>;
 
+export type Path = {
+  key: string;
+  route: string;
+  req: string;
+  bodySchema?: string;
+  querySchema?: string;
+};
+
 export type Controller = {
   route: Router;
-  paths: {
-    key: string;
-    route: string;
-    req: string;
-    bodySchema?: string;
-    querySchema?: string;
-  }[];
+  paths: Path[];
   fields: Field[];
 };
 
@@ -76,4 +78,10 @@ export type RouterBuildType = {
   setController(controller: any): RouterBuildType;
   setMiddlewares(middlewares: RequestHandler[]): RouterBuildType;
   build(): Router;
+};
+
+export type ServerBuildType = {
+  app: Express;
+  paths: Path[];
+  prefix: string;
 };

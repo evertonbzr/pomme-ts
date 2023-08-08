@@ -6,3 +6,4 @@ export * from './src/utils';
 export * from './src/make-field';
 export * from './src/router-build';
 export * from './src/validate-field';
+export * from './src/merge';
