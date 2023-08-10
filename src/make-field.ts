@@ -4,11 +4,6 @@ import { validateField } from './validate-field';
 import { RouterBuild } from './router-build';
 import { ZodTypeAny, z } from 'zod';
 
-const teste = z.object({
-  title: z.string(),
-  description: z.string().optional(),
-});
-
 function _makeField<
   Body extends ZodTypeAny = ZodTypeAny,
   Params extends ZodTypeAny = ZodTypeAny,
@@ -41,7 +36,14 @@ function _makeField<
   const router = routerBuild
     .setPath(path)
     .setMethod(reqType)
-    .setMiddlewares([...middlewares])
+    .setMiddlewares([
+      ...middlewares,
+      validateField({
+        body: bodySchema ?? null,
+        query: querySchema ?? null,
+        params: paramsSchema ?? null,
+      }),
+    ])
     .setController(async (req: Request, res: Response) => {
       const { body, params, query } = req;
 

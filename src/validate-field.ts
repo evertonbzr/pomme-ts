@@ -1,12 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { AnyZodObject } from 'zod';
+import { ZodTypeAny } from 'zod';
 
 export const validateField =
-  (schema: {
-    body?: AnyZodObject;
-    query: AnyZodObject;
-    params: AnyZodObject;
-  }) =>
+  (schema: { body?: ZodTypeAny; query?: ZodTypeAny; params?: ZodTypeAny }) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (schema) {
