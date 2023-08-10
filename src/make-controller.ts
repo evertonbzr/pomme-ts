@@ -40,11 +40,11 @@ class _MakeController {
     });
 
     const fieldsPaths = fieldsSorted.map((field) => {
-      const bodySchemaJSON = field.bodyZod
-        ? zodToJsonSchema(field.bodyZod)
+      const bodySchemaJSON = field.bodySchema
+        ? zodToJsonSchema(field.bodySchema)
         : null;
-      const querySchemaJSON = field.queryZod
-        ? zodToJsonSchema(field.queryZod)
+      const querySchemaJSON = field.querySchema
+        ? zodToJsonSchema(field.querySchema)
         : null;
 
       return {
