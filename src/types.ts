@@ -1,7 +1,7 @@
 import { Express, Request, RequestHandler, Router } from 'express';
 import { AnyZodObject, ZodTypeAny, z } from 'zod';
 
-type ParseZod<ZodItem extends ZodTypeAny> = z.infer<ZodItem>;
+export type ParseZod<ZodItem extends ZodTypeAny> = z.infer<ZodItem>;
 
 export type Field = {
   key: string;

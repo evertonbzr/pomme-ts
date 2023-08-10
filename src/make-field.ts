@@ -1,4 +1,4 @@
-import { Field, FieldArgs, OmitFieldArgs } from './types';
+import { Field, FieldArgs, OmitFieldArgs, ParseZod } from './types';
 import { Request, Response } from 'express';
 import { validateField } from './validate-field';
 import { RouterBuild } from './router-build';
@@ -44,15 +44,20 @@ function _makeField<
         params: paramsSchema ?? null,
       }),
     ])
-    .setController(async (req: Request, res: Response) => {
-      const { body, params, query } = req;
+    .setController(
+      async (
+        req: Request<ParseZod<Params>, {}, ParseZod<Body>, ParseZod<Query>>,
+        res: Response,
+      ) => {
+        const { body, params, query } = req;
 
-      const response = await resolver({ body, params, query }, req);
+        const response = await resolver({ body, params, query }, req);
 
-      res.json({
-        data: response,
-      });
-    })
+        res.json({
+          data: response,
+        });
+      },
+    )
     .build();
 
   return {
@@ -111,14 +116,3 @@ export const makeField = {
     options: FieldArgs<Body, Params, Query>,
   ) => _makeField<Body, Params, Query>(options),
 };
-
-makeField.get({
-  key: 'teste',
-  bodySchema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-  }),
-  async resolver({ body, params, query }) {
-    return 'teste';
-  },
-});
