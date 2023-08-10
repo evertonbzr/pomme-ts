@@ -1,5 +1,7 @@
 import { Express, Request, RequestHandler, Router } from 'express';
-import { AnyZodObject } from 'zod';
+import { AnyZodObject, ZodTypeAny, z } from 'zod';
+
+type ParseZod<ZodItem extends ZodTypeAny> = z.infer<ZodItem>;
 
 export type Field = {
   key: string;
@@ -7,40 +9,43 @@ export type Field = {
   noMw?: boolean;
   path: string;
   reqType: ReqMethod;
-  bodyZod?: AnyZodObject;
-  queryZod?: AnyZodObject;
-  paramsZod?: AnyZodObject;
-};
-
-export type FieldInputOptional = {
-  body?: AnyZodObject;
-  query?: AnyZodObject;
-  params?: AnyZodObject;
+  bodySchema?: ZodTypeAny;
+  querySchema?: ZodTypeAny;
+  paramsSchema?: ZodTypeAny;
 };
 
 export type ReqMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-type ResolveInput = {
-  body?: any;
-  query?: any;
-  params?: any;
-};
-
-export interface FieldArgs<K = any> {
+export interface FieldArgs<
+  BodySchema extends ZodTypeAny = ZodTypeAny,
+  ParamsSchema extends ZodTypeAny = ZodTypeAny,
+  QuerySchema extends ZodTypeAny = ZodTypeAny,
+> {
   key: string;
   reqType: ReqMethod;
   params?: string[];
-  bodyZod?: AnyZodObject;
-  queryZod?: AnyZodObject;
-  paramsZod?: AnyZodObject;
+  bodySchema?: BodySchema;
+  querySchema?: QuerySchema;
+  paramsSchema?: ParamsSchema;
   noMw?: boolean;
-  resolve: (input: ResolveInput, ctx: Request) => Promise<K>;
+  resolver: (
+    input: {
+      body: ParseZod<BodySchema>;
+      params: ParseZod<ParamsSchema>;
+      query: ParseZod<QuerySchema>;
+    },
+    ctx: Request,
+  ) => Promise<any>;
   options?: {
     middlewares?: RequestHandler[];
   };
 }
 
-export type OmitFieldArgs = Omit<FieldArgs, 'reqType'>;
+export type OmitFieldArgs<
+  BodySchema extends ZodTypeAny = ZodTypeAny,
+  ParamsSchema extends ZodTypeAny = ZodTypeAny,
+  QuerySchema extends ZodTypeAny = ZodTypeAny,
+> = Omit<FieldArgs<BodySchema, ParamsSchema, QuerySchema>, 'reqType'>;
 
 export type Path = {
   key: string;

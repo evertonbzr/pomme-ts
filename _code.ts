@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
   MakeController,
   MakeServer,
@@ -10,13 +11,10 @@ const app = express();
 
 const listTodos = makeField.get({
   key: 'listTodos',
-  async resolve({ body }, ctx) {
-    return [
-      {
-        title: 'Todo',
-      },
-    ];
-  },
+  bodySchema: z.object({
+    zod: z.string(),
+  }),
+  async resolver(input, ctx) {},
 });
 
 const todoController = MakeController.create()
