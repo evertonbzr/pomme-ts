@@ -39,26 +39,44 @@ class Generator {
   build() {
     fs.mkdirSync(`${this.dirPath}/${this.folderName}`, { recursive: true });
 
-    fs.writeFileSync(
-      path.join(`${this.dirPath}/${this.folderName}`, 'routes.txt'),
-      this.paths.join('\n'),
-      {
-        encoding: 'utf-8',
-      },
+    let routes: {
+      [key: string]: {
+        createdAt: string;
+        payload: string[];
+      };
+    } = {};
+
+    const routesPath = path.join(
+      `${this.dirPath}/${this.folderName}`,
+      'routes.json',
     );
 
-    const file = fs.readFileSync(
-      path.join(`${this.dirPath}/${this.folderName}`, 'routes.txt'),
-      {
-        encoding: 'utf-8',
-      },
+    if (fs.existsSync(routesPath)) {
+      routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
+    }
+
+    const checksumPaths = this.generateChecksum(
+      JSON.stringify(this.paths).trim(),
+      'md5',
+      'hex',
     );
 
-    const checksum = this.generateChecksum(file, 'md5', 'hex');
+    if (routes[checksumPaths]) {
+      return;
+    }
+
+    routes[checksumPaths] = {
+      payload: this.paths,
+      createdAt: new Date().toISOString(),
+    };
+
+    fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2), {
+      encoding: 'utf-8',
+    });
 
     fs.writeFileSync(
-      path.join(`${this.dirPath}/${this.folderName}`, 'checksum.txt'),
-      checksum,
+      path.join(`${this.dirPath}/${this.folderName}`, 'last-checksum.txt'),
+      checksumPaths,
       {
         encoding: 'utf-8',
       },

@@ -17,9 +17,18 @@ const listTodos = makeField.get({
   async resolver(input, ctx) {},
 });
 
+const getTodo = makeField.get({
+  key: 'getTodo',
+  params: [':id'],
+  bodySchema: z.object({
+    zod: z.string(),
+  }),
+  async resolver(input, ctx) {},
+});
+
 const todoController = MakeController.create()
   .withPath('/todo')
-  .withFields([listTodos])
+  .withFields([listTodos, getTodo])
   .build();
 
 const controllers = [todoController];
