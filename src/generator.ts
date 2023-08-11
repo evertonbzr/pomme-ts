@@ -101,6 +101,14 @@ class Generator {
       'hex',
     );
 
+    fs.writeFileSync(
+      path.join(`${dirPath}/${folderName}`, 'last-checksum.txt'),
+      checksumPaths,
+      {
+        encoding: 'utf-8',
+      },
+    );
+
     if (routes[checksumPaths]) {
       return;
     }
@@ -118,14 +126,6 @@ class Generator {
     fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2), {
       encoding: 'utf-8',
     });
-
-    fs.writeFileSync(
-      path.join(`${dirPath}/${folderName}`, 'last-checksum.txt'),
-      checksumPaths,
-      {
-        encoding: 'utf-8',
-      },
-    );
   }
 }
 
