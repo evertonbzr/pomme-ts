@@ -8,6 +8,7 @@ class Generator {
   private dirPath: string;
   private folderName: string;
   private paths: string[];
+  private limit: number;
 
   constructor() {
     this.dirPath = process.cwd();
@@ -33,6 +34,10 @@ class Generator {
 
   setPaths(paths: string[]) {
     this.paths = paths;
+    return this;
+  }
+  setLimit(limit = 30) {
+    this.limit = limit;
     return this;
   }
 
@@ -74,7 +79,8 @@ class Generator {
   }
 
   build() {
-    fs.mkdirSync(`${this.dirPath}/${this.folderName}`, { recursive: true });
+    const { dirPath, folderName, paths, limit } = this;
+    fs.mkdirSync(`${dirPath}/${folderName}`, { recursive: true });
 
     let routes: {
       [key: string]: {
@@ -83,17 +89,14 @@ class Generator {
       };
     } = {};
 
-    const routesPath = path.join(
-      `${this.dirPath}/${this.folderName}`,
-      'routes.json',
-    );
+    const routesPath = path.join(`${dirPath}/${folderName}`, 'routes.json');
 
     if (fs.existsSync(routesPath)) {
       routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
     }
 
     const checksumPaths = this.generateChecksum(
-      JSON.stringify(this.paths).trim(),
+      JSON.stringify(paths).trim(),
       'md5',
       'hex',
     );
@@ -102,8 +105,13 @@ class Generator {
       return;
     }
 
+    if (Object.keys(routes).length >= limit) {
+      const firstKey = Object.keys(routes)[0];
+      delete routes[firstKey];
+    }
+
     routes[checksumPaths] = {
-      payload: this.paths,
+      payload: paths,
       createdAt: new Date().toISOString(),
     };
 
@@ -112,7 +120,7 @@ class Generator {
     });
 
     fs.writeFileSync(
-      path.join(`${this.dirPath}/${this.folderName}`, 'last-checksum.txt'),
+      path.join(`${dirPath}/${folderName}`, 'last-checksum.txt'),
       checksumPaths,
       {
         encoding: 'utf-8',
@@ -124,15 +132,18 @@ class Generator {
 export function generateRoutesOutput(
   server: ServerBuildType,
   options?: {
-    homeWithLastChekcsum?: boolean;
+    homeWithLastChecksum?: boolean;
+    limit?: number;
   },
 ) {
   const generator = new Generator();
 
-  let homeWithLastChekcsum = false;
+  let homeWithLastChecksum = false;
+  let limit = 30;
 
   if (options) {
-    homeWithLastChekcsum = options.homeWithLastChekcsum || false;
+    homeWithLastChecksum = options.homeWithLastChecksum || false;
+    limit = options.limit || 30;
   }
 
   const { paths, prefix, app } = server;
@@ -159,9 +170,9 @@ export function generateRoutesOutput(
     throw new Error('You cannot use /pomme as a route');
   }
 
-  generator.setPaths(formatedPaths).build();
+  generator.setPaths(formatedPaths).setLimit(limit).build();
 
-  if (homeWithLastChekcsum) {
+  if (homeWithLastChecksum) {
     app.get('/pomme', (req, res) => {
       const payload = generator.getLastPayload();
 

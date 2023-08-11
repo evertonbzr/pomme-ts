@@ -39,7 +39,7 @@ const serverOne = MakeServer.create()
   .withControllers(controllers)
   .build();
 
-generateRoutesOutput(serverOne);
+generateRoutesOutput(serverOne, { limit: 5, homeWithLastChecksum: true });
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
