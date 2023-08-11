@@ -7,7 +7,7 @@
   "private": false,
   "scripts": {
     "build": "tsc",
-    "start": "tsx --watch ./_code.ts"
+    "dev": "tsx --watch ./_code.ts"
   },
   "keywords": [
     "typescript",

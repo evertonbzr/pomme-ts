@@ -36,6 +36,43 @@ class Generator {
     return this;
   }
 
+  getByChecksum(checksum: string) {
+    const routesPath = path.join(
+      `${this.dirPath}/${this.folderName}`,
+      'routes.json',
+    );
+
+    if (!fs.existsSync(routesPath)) {
+      return null;
+    }
+
+    const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
+
+    return routes[checksum];
+  }
+
+  getLastPayload() {
+    const routesPath = path.join(
+      `${this.dirPath}/${this.folderName}`,
+      'routes.json',
+    );
+
+    if (!fs.existsSync(routesPath)) {
+      return null;
+    }
+
+    const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
+
+    const lastChecksum = fs.readFileSync(
+      path.join(`${this.dirPath}/${this.folderName}`, 'last-checksum.txt'),
+      {
+        encoding: 'utf-8',
+      },
+    );
+
+    return routes[lastChecksum];
+  }
+
   build() {
     fs.mkdirSync(`${this.dirPath}/${this.folderName}`, { recursive: true });
 
@@ -84,10 +121,21 @@ class Generator {
   }
 }
 
-export function generateRoutesOutput(server: ServerBuildType) {
+export function generateRoutesOutput(
+  server: ServerBuildType,
+  options?: {
+    justWithChecksum?: boolean;
+  },
+) {
   const generator = new Generator();
 
-  const { paths, prefix } = server;
+  let justWithChecksum = true;
+
+  if (options) {
+    justWithChecksum = options.justWithChecksum || true;
+  }
+
+  const { paths, prefix, app } = server;
 
   const formatedPaths = paths.map((path) => {
     const req = `<@req>${path.req}</@req>`;
@@ -103,5 +151,41 @@ export function generateRoutesOutput(server: ServerBuildType) {
     return `${key}${req}${route}${bodySchema}${querySchema}`;
   });
 
+  const pommePathFind = paths.find((path) =>
+    ['/pomme', '/pomme/:id'].includes(path.route),
+  );
+
+  if (pommePathFind) {
+    throw new Error('You cannot use /pomme as a route');
+  }
+
   generator.setPaths(formatedPaths).build();
+
+  if (justWithChecksum) {
+    app.get('/pomme/:id', (req, res) => {
+      const { id } = req.params;
+
+      const payload = generator.getByChecksum(id);
+
+      if (!payload) {
+        return res.status(404).json({
+          error: 'Not found',
+        });
+      }
+
+      return res.json(payload);
+    });
+  } else {
+    app.get('/pomme', (req, res) => {
+      const payload = generator.getLastPayload();
+
+      if (!payload) {
+        return res.status(404).json({
+          error: 'Not found',
+        });
+      }
+
+      return res.json(payload);
+    });
+  }
 }
