@@ -124,15 +124,15 @@ class Generator {
 export function generateRoutesOutput(
   server: ServerBuildType,
   options?: {
-    justWithChecksum?: boolean;
+    homeWithLastChekcsum?: boolean;
   },
 ) {
   const generator = new Generator();
 
-  let justWithChecksum = true;
+  let homeWithLastChekcsum = false;
 
   if (options) {
-    justWithChecksum = options.justWithChecksum || true;
+    homeWithLastChekcsum = options.homeWithLastChekcsum || false;
   }
 
   const { paths, prefix, app } = server;
@@ -161,21 +161,7 @@ export function generateRoutesOutput(
 
   generator.setPaths(formatedPaths).build();
 
-  if (justWithChecksum) {
-    app.get('/pomme/:id', (req, res) => {
-      const { id } = req.params;
-
-      const payload = generator.getByChecksum(id);
-
-      if (!payload) {
-        return res.status(404).json({
-          error: 'Not found',
-        });
-      }
-
-      return res.json(payload);
-    });
-  } else {
+  if (homeWithLastChekcsum) {
     app.get('/pomme', (req, res) => {
       const payload = generator.getLastPayload();
 
@@ -188,4 +174,18 @@ export function generateRoutesOutput(
       return res.json(payload);
     });
   }
+
+  app.get('/pomme/:id', (req, res) => {
+    const { id } = req.params;
+
+    const payload = generator.getByChecksum(id);
+
+    if (!payload) {
+      return res.status(404).json({
+        error: 'Not found',
+      });
+    }
+
+    return res.json(payload);
+  });
 }
