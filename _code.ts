@@ -12,7 +12,7 @@ const app = express();
 const listTodos = makeField.get({
   key: 'listTodos',
   bodySchema: z.object({
-    zod: z.string(),
+    name: z.string(),
   }),
   async resolver(input, ctx) {},
 });
@@ -21,7 +21,7 @@ const getTodo = makeField.get({
   key: 'getTodo',
   params: [':id'],
   bodySchema: z.object({
-    zod: z.string(),
+    name: z.string(),
   }),
   async resolver(input, ctx) {},
 });
