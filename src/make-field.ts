@@ -1,4 +1,4 @@
-import { Field, FieldArgs, OmitFieldArgs, ParseZod } from './types';
+import { Field, FieldArgs, OmitFieldArgs, ParseZod, ReqMethod } from './types';
 import { Request, Response } from 'express';
 import { validateField } from './validate-field';
 import { RouterBuild } from './router-build';
@@ -73,46 +73,52 @@ function _makeField<
 }
 
 export const makeField = {
+  withMethod: <
+    Body extends ZodTypeAny = ZodTypeAny,
+    Params extends ZodTypeAny = ZodTypeAny,
+    Query extends ZodTypeAny = ZodTypeAny,
+  >(
+    reqType: ReqMethod,
+    options: OmitFieldArgs<Body, Params, Query>,
+  ) => _makeField<Body, Params, Query>({ ...options, reqType }),
+
   get: <
     Body extends ZodTypeAny = ZodTypeAny,
     Params extends ZodTypeAny = ZodTypeAny,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>({ ...options, reqType: 'GET' }),
+  ) => makeField.withMethod<Body, Params, Query>('GET', options),
+
   post: <
     Body extends ZodTypeAny = ZodTypeAny,
     Params extends ZodTypeAny = ZodTypeAny,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>({ ...options, reqType: 'POST' }),
+  ) => makeField.withMethod<Body, Params, Query>('POST', options),
+
   put: <
     Body extends ZodTypeAny = ZodTypeAny,
     Params extends ZodTypeAny = ZodTypeAny,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>({ ...options, reqType: 'PUT' }),
+  ) => makeField.withMethod<Body, Params, Query>('PUT', options),
+
   delete: <
     Body extends ZodTypeAny = ZodTypeAny,
     Params extends ZodTypeAny = ZodTypeAny,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>({ ...options, reqType: 'DELETE' }),
+  ) => makeField.withMethod<Body, Params, Query>('DELETE', options),
+
   patch: <
     Body extends ZodTypeAny = ZodTypeAny,
     Params extends ZodTypeAny = ZodTypeAny,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>({ ...options, reqType: 'PATCH' }),
-  _: <
-    Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
-    Query extends ZodTypeAny = ZodTypeAny,
-  >(
-    options: FieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>(options),
+  ) => makeField.withMethod<Body, Params, Query>('PATCH', options),
 };
