@@ -1,5 +1,5 @@
 import { Express, Request, RequestHandler, Router } from 'express';
-import { AnyZodObject, ZodTypeAny, z } from 'zod';
+import { ZodTypeAny, z } from 'zod';
 
 export type ParseZod<ZodItem extends ZodTypeAny> = z.infer<ZodItem>;
 
@@ -14,24 +14,31 @@ export type Field = {
   paramsSchema?: ZodTypeAny;
 };
 
+type ExtractParams<T extends ReadonlyArray<string>> = {
+  [K in keyof T]: T[K] extends `:${infer Param}` ? Param : never;
+}[number];
+
+type PathParamsObject<T extends ReadonlyArray<string>> = {
+  [K in ExtractParams<T>]: string;
+};
+
 export type ReqMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export interface FieldArgs<
   BodySchema extends ZodTypeAny = ZodTypeAny,
-  ParamsSchema extends ZodTypeAny = ZodTypeAny,
+  ParamsSchema extends ReadonlyArray<string> = ReadonlyArray<string>,
   QuerySchema extends ZodTypeAny = ZodTypeAny,
 > {
   key: string;
   reqType: ReqMethod;
-  params?: string[];
+  params?: ParamsSchema;
   bodySchema?: BodySchema;
   querySchema?: QuerySchema;
-  paramsSchema?: ParamsSchema;
   noMw?: boolean;
   resolver: (
     input: {
       body: ParseZod<BodySchema>;
-      params: ParseZod<ParamsSchema>;
+      params: PathParamsObject<ParamsSchema>;
       query: ParseZod<QuerySchema>;
     },
     ctx: Request,
@@ -43,7 +50,7 @@ export interface FieldArgs<
 
 export type OmitFieldArgs<
   BodySchema extends ZodTypeAny = ZodTypeAny,
-  ParamsSchema extends ZodTypeAny = ZodTypeAny,
+  ParamsSchema extends ReadonlyArray<string> = ReadonlyArray<string>,
   QuerySchema extends ZodTypeAny = ZodTypeAny,
 > = Omit<FieldArgs<BodySchema, ParamsSchema, QuerySchema>, 'reqType'>;
 

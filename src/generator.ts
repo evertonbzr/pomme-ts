@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'node:crypto';
 import { BinaryToTextEncoding } from 'crypto';
-import { Path, ServerBuildType } from './types';
+import { ServerBuildType } from './types';
 
 class Generator {
   private dirPath: string;

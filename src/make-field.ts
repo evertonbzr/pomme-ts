@@ -2,11 +2,11 @@ import { Field, FieldArgs, OmitFieldArgs, ParseZod, ReqMethod } from './types';
 import { Request, Response } from 'express';
 import { validateField } from './validate-field';
 import { RouterBuild } from './router-build';
-import { ZodTypeAny, z } from 'zod';
+import { ZodTypeAny } from 'zod';
 
 function _makeField<
   Body extends ZodTypeAny = ZodTypeAny,
-  Params extends ZodTypeAny = ZodTypeAny,
+  Params extends ReadonlyArray<string> = ReadonlyArray<string>,
   Query extends ZodTypeAny = ZodTypeAny,
 >({
   reqType,
@@ -14,7 +14,6 @@ function _makeField<
   resolver,
   bodySchema,
   querySchema,
-  paramsSchema,
   key,
   noMw = false,
   options = {
@@ -41,12 +40,11 @@ function _makeField<
       validateField({
         body: bodySchema ?? null,
         query: querySchema ?? null,
-        params: paramsSchema ?? null,
       }),
     ])
     .setController(
       async (
-        req: Request<ParseZod<Params>, {}, ParseZod<Body>, ParseZod<Query>>,
+        req: Request<any, {}, ParseZod<Body>, ParseZod<Query>>,
         res: Response,
       ) => {
         const { body, params, query } = req;
@@ -68,14 +66,13 @@ function _makeField<
     key,
     bodySchema,
     querySchema,
-    paramsSchema,
   };
 }
 
 export const makeField = {
   withMethod: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
+    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     reqType: ReqMethod,
@@ -84,7 +81,7 @@ export const makeField = {
 
   get: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
+    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
@@ -92,7 +89,7 @@ export const makeField = {
 
   post: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
+    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
@@ -100,7 +97,7 @@ export const makeField = {
 
   put: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
+    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
@@ -108,7 +105,7 @@ export const makeField = {
 
   delete: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
+    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,
@@ -116,7 +113,7 @@ export const makeField = {
 
   patch: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ZodTypeAny = ZodTypeAny,
+    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Params, Query>,

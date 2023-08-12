@@ -9,26 +9,51 @@ import express from 'express';
 
 const app = express();
 
-const listTodos = makeField.get({
-  key: 'listTodos',
-  bodySchema: z.object({
-    name: z.string(),
-  }),
-  async resolver(input, ctx) {},
+const v1ListTodos = makeField.get({
+  key: 'v1ListTodos',
+  async resolver(input, ctx) {
+    return [
+      {
+        id: '1',
+        title: 'Todo 1',
+        description: 'Description 1',
+      },
+    ];
+  },
 });
 
-const getTodo = makeField.get({
-  key: 'getTodo',
-  params: [':id'],
+const v1CreateTodo = makeField.post({
+  key: 'v1CreateTodo',
   bodySchema: z.object({
-    name: z.string(),
+    title: z.string(),
+    description: z.string(),
   }),
-  async resolver(input, ctx) {},
+  async resolver(input, ctx) {
+    const { title, description } = input.body;
+    return {
+      id: '1',
+      title,
+      description,
+    };
+  },
+});
+
+const v1GetTodo = makeField.get({
+  key: 'v1GetTodo',
+  params: ['home', ':id'] as const,
+  async resolver(input, ctx) {
+    const {} = input.params;
+    return {
+      id: '1',
+      title: 'Todo 1',
+      description: 'Description 1',
+    };
+  },
 });
 
 const todoController = MakeController.create()
   .withPath('/todo')
-  .withFields([listTodos, getTodo])
+  .withFields([v1ListTodos, v1GetTodo, v1CreateTodo])
   .build();
 
 const controllers = [todoController];
