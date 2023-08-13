@@ -5,6 +5,7 @@ import {
   generateRoutesOutput,
   makeField,
 } from './index';
+
 import express from 'express';
 
 const app = express();
@@ -40,9 +41,9 @@ const v1CreateTodo = makeField.post({
 
 const v1GetTodo = makeField.get({
   key: 'v1GetTodo',
-  params: ['home', ':id'] as const,
+  path: '/:id/home/:infoId',
   async resolver(input, ctx) {
-    const {} = input.params;
+    const { id, infoId } = input.params;
     return {
       id: '1',
       title: 'Todo 1',

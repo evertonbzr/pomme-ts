@@ -11,34 +11,31 @@ export type Field = {
   reqType: ReqMethod;
   bodySchema?: ZodTypeAny;
   querySchema?: ZodTypeAny;
-  paramsSchema?: ZodTypeAny;
 };
 
-type ExtractParams<T extends ReadonlyArray<string>> = {
-  [K in keyof T]: T[K] extends `:${infer Param}` ? Param : never;
-}[number];
-
-type PathParamsObject<T extends ReadonlyArray<string>> = {
-  [K in ExtractParams<T>]: string;
-};
+type ParseRouteParams<Rte> = Rte extends `${string}:${infer P}/${infer Rest}`
+  ? P | ParseRouteParams<`/${Rest}`>
+  : Rte extends `${string}:${infer P}`
+  ? P
+  : never;
 
 export type ReqMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export interface FieldArgs<
   BodySchema extends ZodTypeAny = ZodTypeAny,
-  ParamsSchema extends ReadonlyArray<string> = ReadonlyArray<string>,
+  Path extends string = string,
   QuerySchema extends ZodTypeAny = ZodTypeAny,
 > {
   key: string;
   reqType: ReqMethod;
-  params?: ParamsSchema;
+  path?: Path;
   bodySchema?: BodySchema;
   querySchema?: QuerySchema;
   noMw?: boolean;
   resolver: (
     input: {
       body: ParseZod<BodySchema>;
-      params: PathParamsObject<ParamsSchema>;
+      params: Record<ParseRouteParams<Path>, string>;
       query: ParseZod<QuerySchema>;
     },
     ctx: Request,
@@ -50,9 +47,9 @@ export interface FieldArgs<
 
 export type OmitFieldArgs<
   BodySchema extends ZodTypeAny = ZodTypeAny,
-  ParamsSchema extends ReadonlyArray<string> = ReadonlyArray<string>,
+  Path extends string = string,
   QuerySchema extends ZodTypeAny = ZodTypeAny,
-> = Omit<FieldArgs<BodySchema, ParamsSchema, QuerySchema>, 'reqType'>;
+> = Omit<FieldArgs<BodySchema, Path, QuerySchema>, 'reqType'>;
 
 export type Path = {
   key: string;

@@ -6,11 +6,11 @@ import { ZodTypeAny } from 'zod';
 
 function _makeField<
   Body extends ZodTypeAny = ZodTypeAny,
-  Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+  Path extends string = string,
   Query extends ZodTypeAny = ZodTypeAny,
 >({
   reqType,
-  params,
+  path,
   resolver,
   bodySchema,
   querySchema,
@@ -19,21 +19,15 @@ function _makeField<
   options = {
     middlewares: [],
   },
-}: FieldArgs<Body, Params, Query>): Field {
+}: FieldArgs<Body, Path, Query>): Field {
   const routerBuild = new RouterBuild();
 
   const { middlewares } = options;
 
-  let path = '/';
-
-  if (params && params.length > 0) {
-    for (const param of params) {
-      path += `${param.replace(/^\/|\/$/i, '')}/`;
-    }
-  }
+  let pathDefine = path ?? '/';
 
   const router = routerBuild
-    .setPath(path)
+    .setPath(pathDefine)
     .setMethod(reqType)
     .setMiddlewares([
       ...middlewares,
@@ -61,7 +55,7 @@ function _makeField<
   return {
     router,
     noMw,
-    path,
+    path: pathDefine,
     reqType,
     key,
     bodySchema,
@@ -72,50 +66,50 @@ function _makeField<
 export const makeField = {
   withMethod: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+    Path extends string = string,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     reqType: ReqMethod,
-    options: OmitFieldArgs<Body, Params, Query>,
-  ) => _makeField<Body, Params, Query>({ ...options, reqType }),
+    options: OmitFieldArgs<Body, Path, Query>,
+  ) => _makeField<Body, Path, Query>({ ...options, reqType }),
 
   get: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+    Path extends string = string,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
-    options: OmitFieldArgs<Body, Params, Query>,
-  ) => makeField.withMethod<Body, Params, Query>('GET', options),
+    options: OmitFieldArgs<Body, Path, Query>,
+  ) => makeField.withMethod<Body, Path, Query>('GET', options),
 
   post: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+    Path extends string = string,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
-    options: OmitFieldArgs<Body, Params, Query>,
-  ) => makeField.withMethod<Body, Params, Query>('POST', options),
+    options: OmitFieldArgs<Body, Path, Query>,
+  ) => makeField.withMethod<Body, Path, Query>('POST', options),
 
   put: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+    Path extends string = string,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
-    options: OmitFieldArgs<Body, Params, Query>,
-  ) => makeField.withMethod<Body, Params, Query>('PUT', options),
+    options: OmitFieldArgs<Body, Path, Query>,
+  ) => makeField.withMethod<Body, Path, Query>('PUT', options),
 
   delete: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+    Path extends string = string,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
-    options: OmitFieldArgs<Body, Params, Query>,
-  ) => makeField.withMethod<Body, Params, Query>('DELETE', options),
+    options: OmitFieldArgs<Body, Path, Query>,
+  ) => makeField.withMethod<Body, Path, Query>('DELETE', options),
 
   patch: <
     Body extends ZodTypeAny = ZodTypeAny,
-    Params extends ReadonlyArray<string> = ReadonlyArray<string>,
+    Path extends string = string,
     Query extends ZodTypeAny = ZodTypeAny,
   >(
-    options: OmitFieldArgs<Body, Params, Query>,
-  ) => makeField.withMethod<Body, Params, Query>('PATCH', options),
+    options: OmitFieldArgs<Body, Path, Query>,
+  ) => makeField.withMethod<Body, Path, Query>('PATCH', options),
 };
