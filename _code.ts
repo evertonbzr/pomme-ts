@@ -5,41 +5,58 @@ import {
   generateRoutesOutput,
   makeField,
 } from './index';
+
 import express from 'express';
 
 const app = express();
+app.use(express.json());
 
-const listTodos = makeField.get({
-  key: 'listTodos',
-  bodySchema: z.object({
-    name: z.string(),
-  }),
-  async resolver(input, ctx) {},
-});
 
-const getTodo = makeField.get({
+// /todo/:id
+const v1GetTodo = makeField.get({
   key: 'getTodo',
-  params: [':id'],
+  path: '/:id',
+  async resolver(input, ctx) {
+    return {
+      ok: true
+    }
+  },
+})
+
+
+const v1CreateTodo = makeField.post({
+  key: 'createTodo',
   bodySchema: z.object({
-    name: z.string(),
+    title: z.string(),
+    description: z.string(),
+    done: z.boolean().default(false),
   }),
-  async resolver(input, ctx) {},
-});
+  async resolver(input, ctx) {
+    const { title, description, done } = input.body;
+    return {
+      id: 1,
+      title,
+      description,
+      done,
+    }
+  },
+})
 
 const todoController = MakeController.create()
   .withPath('/todo')
-  .withFields([listTodos, getTodo])
+  .withFields([v1GetTodo, v1CreateTodo])
   .build();
 
-const controllers = [todoController];
-
-const serverOne = MakeServer.create()
+const server = MakeServer.create()
   .withApp(app)
   .withPrefix('/v1')
-  .withControllers(controllers)
+  .withControllers([todoController])
   .build();
 
-generateRoutesOutput(serverOne, { limit: 5, homeWithLastChecksum: true });
+generateRoutesOutput(server, {
+  homeWithLastChecksum: false,
+  limit: 5
+});
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

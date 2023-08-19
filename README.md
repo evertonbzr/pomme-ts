@@ -22,10 +22,12 @@ import {
   MakeServer,
   generateRoutesOutput,
   makeField,
-} from './index';
+} from 'pomme-ts';
+
 import express from 'express';
 
 const app = express();
+app.use(express.json());
 
 const listTodos = makeField.get({
   key: 'listTodos',
@@ -45,14 +47,14 @@ const todoController = MakeController.create()
 
 const controllers = [todoController];
 
-const serverOne = MakeServer.create()
+const server = MakeServer.create()
   .withApp(app)
   .withPrefix('/v1')
   .withControllers(controllers)
   .build();
 
 //Optional
-generateRoutesOutput(serverOne);
+generateRoutesOutput(server);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
