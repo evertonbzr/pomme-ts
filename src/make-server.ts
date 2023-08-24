@@ -1,21 +1,28 @@
 import { Express, RequestHandler } from 'express';
-import { Controller, ServerBuildType } from './types';
+import { Controller, Plugin, ServerBuildType } from './types';
 
 class _MakeServer {
   private prefix: string;
   private app: Express;
   private controllers: Controller[];
   private middlewares: RequestHandler[];
+  private plugins: Plugin[];
 
   constructor() {
     this.prefix = '/';
     this.app = undefined;
     this.controllers = [];
     this.middlewares = [];
+    this.plugins = [];
   }
 
   withPrefix(prefix: string) {
     this.prefix = prefix;
+    return this;
+  }
+
+  withPlugins(plugins: Plugin[]) {
+    this.plugins = plugins;
     return this;
   }
 
@@ -66,16 +73,23 @@ class _MakeServer {
       throw new Error(`Duplicate routes found: ${pathsDuplicate.join(', ')}`);
     }
 
-    return {
+    const server = {
       app: this.app,
+      controllers: this.controllers,
       paths,
       prefix,
     };
-  }
-}
 
-export class MakeServer {
+    for (const plugin of this.plugins) {
+      plugin(server);
+    }
+
+    return server;
+  }
+
   static create() {
     return new _MakeServer();
   }
 }
+
+export const server = _MakeServer.create;

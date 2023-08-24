@@ -93,4 +93,7 @@ export type ServerBuildType = {
   app: Express;
   paths: Path[];
   prefix: string;
+  controllers: Controller[];
 };
+
+export type Plugin = (server: ServerBuildType, ...args: any) => void;

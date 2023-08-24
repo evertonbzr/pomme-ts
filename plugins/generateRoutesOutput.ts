@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'node:crypto';
 import { BinaryToTextEncoding } from 'crypto';
-import { ServerBuildType } from './types';
+import { ServerBuildType } from '../src/types';
 
 class Generator {
   private dirPath: string;
@@ -129,7 +129,7 @@ class Generator {
   }
 }
 
-export function generateRoutesOutput(
+export function generateRoutesOutputPlugin(
   server: ServerBuildType,
   options?: {
     homeWithLastChecksum?: boolean;

@@ -31,6 +31,10 @@ class _MakeController {
   }
 
   build() {
+    if (!this.path) {
+      throw new Error('ControllerBuild requires path.');
+    }
+
     const fieldsSorted = this.fields.sort((a) => {
       if (a.noMw) {
         return -1;
@@ -74,10 +78,10 @@ class _MakeController {
       fields: fieldsSorted,
     };
   }
-}
 
-export class MakeController {
   static create() {
     return new _MakeController();
   }
 }
+
+export const controller = _MakeController.create;

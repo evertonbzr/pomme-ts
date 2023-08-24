@@ -1,63 +1,35 @@
 import { z } from 'zod';
-import {
-  MakeController,
-  MakeServer,
-  generateRoutesOutput,
-  makeField,
-} from './index';
+import { p } from './index';
 
 import express from 'express';
+import { generateRoutesOutputPlugin } from './plugins/generateRoutesOutput';
 
 const app = express();
+
 app.use(express.json());
 
-
-// /todo/:id
-const v1GetTodo = makeField.get({
+const v1GetTodo = p.field.get({
   key: 'getTodo',
-  path: '/:id',
   async resolver(input, ctx) {
-    return {
-      ok: true
-    }
-  },
-})
-
-
-const v1CreateTodo = makeField.post({
-  key: 'createTodo',
-  bodySchema: z.object({
-    title: z.string(),
-    description: z.string(),
-    done: z.boolean().default(false),
-  }),
-  async resolver(input, ctx) {
-    const { title, description, done } = input.body;
     return {
       id: 1,
-      title,
-      description,
-      done,
-    }
+      name: 'todo',
+    };
   },
-})
+});
 
-const todoController = MakeController.create()
+const todoController = p
+  .controller()
   .withPath('/todo')
-  .withFields([v1GetTodo, v1CreateTodo])
+  .withFields([v1GetTodo])
   .build();
 
-const server = MakeServer.create()
+p.server()
   .withApp(app)
-  .withPrefix('/v1')
+  .withPlugins([generateRoutesOutputPlugin])
   .withControllers([todoController])
   .build();
 
-generateRoutesOutput(server, {
-  homeWithLastChecksum: false,
-  limit: 5
-});
-
 app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+  console.log('Server running on port 3000');
 });
