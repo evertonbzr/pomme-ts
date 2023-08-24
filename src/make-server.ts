@@ -1,5 +1,7 @@
 import { Express, RequestHandler } from 'express';
+import { bold, cyan, green,  } from 'kleur/colors';
 import { Controller, Plugin, ServerBuildType } from './types';
+import { error, info } from './logger';
 
 class _MakeServer {
   private prefix: string;
@@ -43,6 +45,7 @@ class _MakeServer {
 
   build(): ServerBuildType {
     if (!this.app) {
+      error('RouterBuild requires app.');
       throw new Error('RouterBuild requires app.');
     }
 
@@ -52,9 +55,7 @@ class _MakeServer {
     const prefix = this.prefix === '/' ? '' : this.prefix;
 
     for (const path of paths) {
-      console.log(
-        `[MakeServer] ${path.key} ${path.req} ${prefix}${path.route}`,
-      );
+      info(`${bold(path.key)} ${green(path.req)} ${prefix}${path.route}`);
     }
 
     for (const route of routes) {

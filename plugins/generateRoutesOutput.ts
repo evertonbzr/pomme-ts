@@ -129,52 +129,63 @@ class Generator {
   }
 }
 
-export function generateRoutesOutputPlugin(
-  server: ServerBuildType,
-  options?: {
-    homeWithLastChecksum?: boolean;
-    limit?: number;
-  },
-) {
-  const generator = new Generator();
+export const generateRoutesOutputPlugin =
+  (options?: { homeWithLastChecksum?: boolean; limit?: number }) =>
+  (server: ServerBuildType) => {
+    const generator = new Generator();
 
-  let homeWithLastChecksum = false;
-  let limit = 30;
+    let homeWithLastChecksum = false;
+    let limit = 30;
 
-  if (options) {
-    homeWithLastChecksum = options.homeWithLastChecksum || false;
-    limit = options.limit || 30;
-  }
+    if (options) {
+      homeWithLastChecksum = options.homeWithLastChecksum || false;
+      limit = options.limit || 30;
+    }
 
-  const { paths, prefix, app } = server;
+    const { paths, prefix, app } = server;
 
-  const formatedPaths = paths.map((path) => {
-    const req = `<@req>${path.req}</@req>`;
-    const route = `<@route>${prefix}${path.route}</@route>`;
-    const key = `<@key>${path.key}</@key>`;
-    const bodySchema = path.bodySchema
-      ? `<@body>${path.bodySchema}</@body>`
-      : '';
-    const querySchema = path.querySchema
-      ? `<@query>${path.querySchema}</@query>`
-      : '';
+    const formatedPaths = paths.map((path) => {
+      const req = `<@req>${path.req}</@req>`;
+      const route = `<@route>${prefix}${path.route}</@route>`;
+      const key = `<@key>${path.key}</@key>`;
+      const bodySchema = path.bodySchema
+        ? `<@body>${path.bodySchema}</@body>`
+        : '';
+      const querySchema = path.querySchema
+        ? `<@query>${path.querySchema}</@query>`
+        : '';
 
-    return `${key}${req}${route}${bodySchema}${querySchema}`;
-  });
+      return `${key}${req}${route}${bodySchema}${querySchema}`;
+    });
 
-  const pommePathFind = paths.find((path) =>
-    ['/pomme', '/pomme/:id'].includes(path.route),
-  );
+    const pommePathFind = paths.find((path) =>
+      ['/pomme', '/pomme/:id'].includes(path.route),
+    );
 
-  if (pommePathFind) {
-    throw new Error('You cannot use /pomme as a route');
-  }
+    if (pommePathFind) {
+      throw new Error('You cannot use /pomme as a route');
+    }
 
-  generator.setPaths(formatedPaths).setLimit(limit).build();
+    generator.setPaths(formatedPaths).setLimit(limit).build();
 
-  if (homeWithLastChecksum) {
-    app.get('/pomme', (req, res) => {
-      const payload = generator.getLastPayload();
+    if (homeWithLastChecksum) {
+      app.get('/pomme', (req, res) => {
+        const payload = generator.getLastPayload();
+
+        if (!payload) {
+          return res.status(404).json({
+            error: 'Not found',
+          });
+        }
+
+        return res.json(payload);
+      });
+    }
+
+    app.get('/pomme/:id', (req, res) => {
+      const { id } = req.params;
+
+      const payload = generator.getByChecksum(id);
 
       if (!payload) {
         return res.status(404).json({
@@ -184,19 +195,4 @@ export function generateRoutesOutputPlugin(
 
       return res.json(payload);
     });
-  }
-
-  app.get('/pomme/:id', (req, res) => {
-    const { id } = req.params;
-
-    const payload = generator.getByChecksum(id);
-
-    if (!payload) {
-      return res.status(404).json({
-        error: 'Not found',
-      });
-    }
-
-    return res.json(payload);
-  });
-}
+  };

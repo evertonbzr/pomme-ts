@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { p } from './index';
 
 import express from 'express';
@@ -26,7 +25,11 @@ const todoController = p
 
 p.server()
   .withApp(app)
-  .withPlugins([generateRoutesOutputPlugin])
+  .withPlugins([
+    generateRoutesOutputPlugin({
+      homeWithLastChecksum: true,
+    }),
+  ])
   .withControllers([todoController])
   .build();
 
