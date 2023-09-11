@@ -1,12 +1,12 @@
 import { blue, red, yellow } from 'kleur/colors';
 
 export const tags = {
-  error: red('prisma:error'),
-  warn: yellow('prisma:warn'),
-  info: blue('prisma:info'),
+  error: red('pomme:error'),
+  warn: yellow('pomme:warn'),
+  info: blue('pomme:info'),
 };
 export const should = {
-  warn: () => !process.env.PRISMA_DISABLE_WARNINGS,
+  warn: () => !process.env.POMME_DISABLE_WARNINGS,
 };
 export function log(...data: any[]) {
   console.log(...data);
