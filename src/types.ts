@@ -60,6 +60,7 @@ export type Path = {
 };
 
 export type Controller = {
+  key: string;
   route: Router;
   paths: Path[];
   fields: Field[];

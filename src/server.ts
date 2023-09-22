@@ -1,5 +1,5 @@
 import { Express, RequestHandler } from 'express';
-import { bold, cyan, green,  } from 'kleur/colors';
+import { bold, cyan, green } from 'kleur/colors';
 import { Controller, Plugin, ServerBuildType } from './types';
 import { error, info } from './logger';
 
@@ -50,7 +50,15 @@ class _MakeServer {
     }
 
     const routes = this.controllers.map((controller) => controller.route);
-    const paths = this.controllers.map((controller) => controller.paths).flat();
+    const paths = this.controllers
+      .map((controller) => {
+        console.log(controller.key);
+        return controller.paths.map((path) => ({
+          ...path,
+          route: `${controller.key}${path.route}`,
+        }));
+      })
+      .flat();
 
     const prefix = this.prefix === '/' ? '' : this.prefix;
 

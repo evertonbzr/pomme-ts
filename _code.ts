@@ -1,13 +1,17 @@
 import express from 'express';
 import { p } from './index';
 import { generateRoutesOutputPlugin } from './plugins/generateRoutesOutput';
+import { z } from 'zod';
 const app = express();
-
 app.use(express.json());
 
-const v1ListTodos = p.field.get({
+const v1ListTodos = p.route.get({
   key: 'v1ListTodos',
+  bodySchema: z.object({
+    title: z.string(),
+  }),
   async resolver(input, ctx) {
+    const { title } = input.body;
     return [
       {
         id: '1',
@@ -17,43 +21,22 @@ const v1ListTodos = p.field.get({
   },
 });
 
-const v1GetTodo = p.field.get({
-  key: 'v1GetTodo',
-  path: '/:id',
-  options: {
-    middlewares: [],
-  },
-  noMw: true,
-  async resolver(input, ctx) {
-    const { id } = input.params;
-
-    return [
-      {
-        id,
-        title: 'Todo 1',
-      },
-    ];
-  },
-});
-
 const todoController = p
   .controller()
   .withPath('/todo')
-  .withMiddlewares([])
-  .withFields([v1ListTodos, v1GetTodo])
+  .withFields([v1ListTodos])
   .build();
 
-const controllers = [todoController];
-
-p.server()
+const server = p
+  .server()
   .withApp(app)
   .withPlugins([
     generateRoutesOutputPlugin({
       homeWithLastChecksum: true,
+      limit: 5,
     }),
   ])
-  .withPrefix('/v1')
-  .withControllers(controllers)
+  .withControllers([todoController])
   .build();
 
 app.listen(3000, () => {

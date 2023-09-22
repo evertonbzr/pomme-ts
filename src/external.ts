@@ -1,4 +1,4 @@
-export * from './make-controller';
-export * from './make-server';
+export * from './controller';
+export * from './server';
 export * from './types';
 export * from './make-field';

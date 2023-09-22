@@ -63,7 +63,7 @@ function _makeField<
   };
 }
 
-export const field = {
+export const route = {
   withMethod: <
     Body extends ZodTypeAny = ZodTypeAny,
     Path extends string = string,
@@ -79,7 +79,7 @@ export const field = {
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Path, Query>,
-  ) => field.withMethod<Body, Path, Query>('GET', options),
+  ) => route.withMethod<Body, Path, Query>('GET', options),
 
   post: <
     Body extends ZodTypeAny = ZodTypeAny,
@@ -87,7 +87,7 @@ export const field = {
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Path, Query>,
-  ) => field.withMethod<Body, Path, Query>('POST', options),
+  ) => route.withMethod<Body, Path, Query>('POST', options),
 
   put: <
     Body extends ZodTypeAny = ZodTypeAny,
@@ -95,7 +95,7 @@ export const field = {
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Path, Query>,
-  ) => field.withMethod<Body, Path, Query>('PUT', options),
+  ) => route.withMethod<Body, Path, Query>('PUT', options),
 
   delete: <
     Body extends ZodTypeAny = ZodTypeAny,
@@ -103,7 +103,7 @@ export const field = {
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Path, Query>,
-  ) => field.withMethod<Body, Path, Query>('DELETE', options),
+  ) => route.withMethod<Body, Path, Query>('DELETE', options),
 
   patch: <
     Body extends ZodTypeAny = ZodTypeAny,
@@ -111,5 +111,5 @@ export const field = {
     Query extends ZodTypeAny = ZodTypeAny,
   >(
     options: OmitFieldArgs<Body, Path, Query>,
-  ) => field.withMethod<Body, Path, Query>('PATCH', options),
+  ) => route.withMethod<Body, Path, Query>('PATCH', options),
 };
