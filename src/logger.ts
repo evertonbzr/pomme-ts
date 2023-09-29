@@ -11,6 +11,7 @@ export const should = {
 export function log(...data: any[]) {
   console.log(...data);
 }
+
 export function warn(message: any, ...optionalParams: any[]) {
   if (should.warn()) {
     console.warn(`${tags.warn} ${message}`, ...optionalParams);

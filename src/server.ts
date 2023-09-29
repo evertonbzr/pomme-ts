@@ -52,7 +52,6 @@ class _MakeServer {
     const routes = this.controllers.map((controller) => controller.route);
     const paths = this.controllers
       .map((controller) => {
-        console.log(controller.key);
         return controller.paths.map((path) => ({
           ...path,
           route: `${controller.key}${path.route}`,
