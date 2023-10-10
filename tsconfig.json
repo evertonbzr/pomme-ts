@@ -3,8 +3,8 @@
   "compilerOptions": {
     "incremental": true,
     "outDir": "./dist/",
-    "target": "es5",
-    "lib": ["es2017", "es7", "es6", "dom"],
+    "target": "ES6",
+    "lib": ["ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -21,7 +21,7 @@
     "inlineSourceMap": true,
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "./.eslintrc.cjs", "index.ts"],
+  "include": ["src/**/*.ts", "src/**/*.js", "./.eslintrc.cjs", "index.ts", "plugins/*"],
   "exclude": ["dist", "node_modules", "_code.ts"],
   "ts-node": {
     "transpileOnly": true

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Request, Response } from 'express';
-import { makeField } from '../make-field';
+import { route as makeField } from '../make-field';
 
 let mockRequest: Request;
 let mockResponse: Response;

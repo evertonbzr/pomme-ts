@@ -17,47 +17,67 @@ yarn add pomme-ts
 Here's a basic example of how to create a route using PommeTS:
 
 ```javascript
-import {
-  MakeController,
-  MakeServer,
-  generateRoutesOutput,
-  makeField,
-} from 'pomme-ts';
-
 import express from 'express';
+import { p } from 'pomme-ts';
+import { generateRoutesOutputPlugin } from './plugins/generateRoutesOutput';
 
+import { z } from 'zod';
 const app = express();
 app.use(express.json());
 
-const listTodos = makeField.get({
-  key: 'listTodos',
-  async resolve({ body }, ctx) {
+const v1CreateTodo = p.route.post({
+  key: 'v1CreateTodo',
+  bodySchema: z.object({
+    title: z.string(),
+  }),
+  async resolver(input, ctx) {
+    const { title } = input.body;
     return [
       {
-        title: 'Todo',
+        id: '1',
+        title: 'Todo 1',
       },
     ];
   },
 });
 
-const todoController = MakeController.create()
+const v1GetTodo = p.route.get({
+  key: 'v1GetTodo',
+  path: '/:id',
+  querySchema: z.object({
+    title: z.string().optional(),
+  }),
+  async resolver(input, ctx) {
+    const { title } = input.body;
+    return [
+      {
+        id: '1',
+        title: 'Todo 1',
+      },
+    ];
+  },
+});
+
+const todoController = p
+  .controller()
   .withPath('/todo')
-  .withFields([listTodos])
+  .withRoutes([v1GetTodo, v1CreateTodo])
   .build();
 
-const controllers = [todoController];
-
-const server = MakeServer.create()
+const server = p
+  .server()
   .withApp(app)
-  .withPrefix('/v1')
-  .withControllers(controllers)
+  .withPlugins([
+    generateRoutesOutputPlugin({
+      homeWithLastChecksum: true,
+      limit: 5,
+    }),
+  ])
+  .withControllers([todoController])
   .build();
-
-//Optional
-generateRoutesOutput(server);
 
 app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+  console.log('Server started on port 3000');
 });
 ```
 

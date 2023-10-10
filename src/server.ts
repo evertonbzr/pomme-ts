@@ -1,21 +1,30 @@
 import { Express, RequestHandler } from 'express';
-import { Controller, ServerBuildType } from './types';
+import { bold, cyan, green } from 'kleur/colors';
+import { Controller, Plugin, ServerBuildType } from './types';
+import { error, info } from './logger';
 
 class _MakeServer {
   private prefix: string;
   private app: Express;
   private controllers: Controller[];
   private middlewares: RequestHandler[];
+  private plugins: Plugin[];
 
   constructor() {
     this.prefix = '/';
     this.app = undefined;
     this.controllers = [];
     this.middlewares = [];
+    this.plugins = [];
   }
 
   withPrefix(prefix: string) {
     this.prefix = prefix;
+    return this;
+  }
+
+  withPlugins(plugins: Plugin[]) {
+    this.plugins = plugins;
     return this;
   }
 
@@ -36,18 +45,24 @@ class _MakeServer {
 
   build(): ServerBuildType {
     if (!this.app) {
+      error('RouterBuild requires app.');
       throw new Error('RouterBuild requires app.');
     }
 
     const routes = this.controllers.map((controller) => controller.route);
-    const paths = this.controllers.map((controller) => controller.paths).flat();
+    const paths = this.controllers
+      .map((controller) => {
+        return controller.paths.map((path) => ({
+          ...path,
+          route: `${controller.key}${path.route}`,
+        }));
+      })
+      .flat();
 
     const prefix = this.prefix === '/' ? '' : this.prefix;
 
     for (const path of paths) {
-      console.log(
-        `[MakeServer] ${path.key} ${path.req} ${prefix}${path.route}`,
-      );
+      info(`${bold(path.key)} ${green(path.req)} ${prefix}${path.route}`);
     }
 
     for (const route of routes) {
@@ -66,16 +81,23 @@ class _MakeServer {
       throw new Error(`Duplicate routes found: ${pathsDuplicate.join(', ')}`);
     }
 
-    return {
+    const server = {
       app: this.app,
+      controllers: this.controllers,
       paths,
       prefix,
     };
-  }
-}
 
-export class MakeServer {
+    for (const plugin of this.plugins) {
+      plugin(server);
+    }
+
+    return server;
+  }
+
   static create() {
     return new _MakeServer();
   }
 }
+
+export const server = _MakeServer.create;

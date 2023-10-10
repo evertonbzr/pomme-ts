@@ -2,7 +2,7 @@ import { RequestHandler, Router } from 'express';
 import { Field } from './types';
 import zodToJsonSchema from 'zod-to-json-schema';
 
-class _MakeController {
+class Controller {
   private path: string;
   private fields: Field[];
   private middleware: RequestHandler[];
@@ -20,7 +20,7 @@ class _MakeController {
     return this;
   }
 
-  withFields(fields: Field[]) {
+  withRoutes(fields: Field[]) {
     this.fields = fields;
     return this;
   }
@@ -31,6 +31,10 @@ class _MakeController {
   }
 
   build() {
+    if (!this.path) {
+      throw new Error('ControllerBuild requires path.');
+    }
+
     const fieldsSorted = this.fields.sort((a) => {
       if (a.noMw) {
         return -1;
@@ -49,7 +53,7 @@ class _MakeController {
 
       return {
         key: field.key,
-        route: this.path + field.path,
+        route: field.path,
         req: field.reqType,
         ...(bodySchemaJSON && {
           bodySchema: JSON.stringify(bodySchemaJSON),
@@ -69,15 +73,16 @@ class _MakeController {
     });
 
     return {
+      key: this.path,
       route: this.router,
       paths: fieldsPaths,
       fields: fieldsSorted,
     };
   }
-}
 
-export class MakeController {
   static create() {
-    return new _MakeController();
+    return new Controller();
   }
 }
+
+export const controller = Controller.create;

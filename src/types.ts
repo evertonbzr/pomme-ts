@@ -60,6 +60,7 @@ export type Path = {
 };
 
 export type Controller = {
+  key: string;
   route: Router;
   paths: Path[];
   fields: Field[];
@@ -93,4 +94,7 @@ export type ServerBuildType = {
   app: Express;
   paths: Path[];
   prefix: string;
+  controllers: Controller[];
 };
+
+export type Plugin = (server: ServerBuildType, ...args: any) => void;
