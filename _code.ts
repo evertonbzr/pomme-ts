@@ -39,6 +39,13 @@ const v1CreateTodo = p.route.post({
   },
 });
 
+const v1UpdateTodo = p.route.put({
+  key: 'v1UpdateTodo',
+  async resolver({}, _) {
+    return null;
+  },
+});
+
 const v1GetTodo = p.route.get({
   key: 'v1GetTodo',
   path: '/:id',
@@ -59,7 +66,7 @@ const v1GetTodo = p.route.get({
 const todoController = p
   .controller()
   .withPath('/todo')
-  .withFields([v1ListTodos, v1GetTodo, v1CreateTodo])
+  .withRoutes([v1ListTodos, v1GetTodo, v1CreateTodo, v1UpdateTodo])
   .build();
 
 const server = p

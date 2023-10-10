@@ -20,7 +20,7 @@ class Controller {
     return this;
   }
 
-  withFields(fields: Field[]) {
+  withRoutes(fields: Field[]) {
     this.fields = fields;
     return this;
   }
