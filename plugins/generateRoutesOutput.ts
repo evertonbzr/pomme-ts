@@ -3,6 +3,7 @@ import path from 'path';
 import crypto from 'node:crypto';
 import { BinaryToTextEncoding } from 'crypto';
 import { ServerBuildType } from '../src/types';
+import { getConstName } from 'src/utils';
 
 class Generator {
   private dirPath: string;
@@ -142,9 +143,12 @@ export const generateRoutesOutputPlugin =
       limit = options.limit || 30;
     }
 
-    const { paths, prefix, app } = server;
+    const { paths, prefix, app, controllers } = server;
 
     const formatedPaths = paths.map((path) => {
+      const controllerConst = `<@controller>${getConstName(
+        path.controllerPath,
+      )}</@controller>`;
       const req = `<@req>${path.req}</@req>`;
       const route = `<@route>${prefix}${path.route}</@route>`;
       const key = `<@key>${path.key}</@key>`;
@@ -155,7 +159,7 @@ export const generateRoutesOutputPlugin =
         ? `<@query>${path.querySchema}</@query>`
         : '';
 
-      return `${key}${req}${route}${bodySchema}${querySchema}`;
+      return `${key}${req}${controllerConst}${route}${bodySchema}${querySchema}`;
     });
 
     const pommePathFind = paths.find((path) =>

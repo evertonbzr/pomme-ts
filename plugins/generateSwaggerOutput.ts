@@ -119,6 +119,4 @@ export const generateSwaggerOutput =
       ...opts,
       paths,
     };
-    console.log('opt', JSON.stringify(openapi, null, 2));
-    console.log(server.controllers[0].paths);
   };

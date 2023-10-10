@@ -55,6 +55,7 @@ export type Path = {
   key: string;
   route: string;
   req: string;
+  controllerPath?: string;
   bodySchema?: string;
   querySchema?: string;
 };

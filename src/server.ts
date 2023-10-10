@@ -55,6 +55,7 @@ class _MakeServer {
         return controller.paths.map((path) => ({
           ...path,
           route: `${controller.key}${path.route}`,
+          controllerPath: controller.key,
         }));
       })
       .flat();

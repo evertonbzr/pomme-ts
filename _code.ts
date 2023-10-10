@@ -75,7 +75,7 @@ const server = p
   .withPlugins([
     generateRoutesOutputPlugin({
       homeWithLastChecksum: true,
-      limit: 5,
+      limit: 1,
     }),
     generateSwaggerOutput({
       openapi: '3.0.0',
