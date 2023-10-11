@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import crypto from 'node:crypto';
 import { BinaryToTextEncoding } from 'crypto';
@@ -7,14 +7,12 @@ import { getConstName } from '../src/utils';
 
 class Generator {
   private dirPath: string;
-  private folderName: string;
   private paths: string[];
   private limit: number;
 
   constructor() {
-    this.dirPath = process.cwd();
+    this.dirPath = process.cwd() + '/routes-output';
     this.paths = [];
-    this.folderName = 'routes-output';
   }
 
   private generateChecksum(
@@ -29,7 +27,7 @@ class Generator {
   }
 
   setDirPath(path: string) {
-    this.dirPath = path;
+    this.dirPath = process.cwd() + path;
     return this;
   }
 
@@ -43,10 +41,7 @@ class Generator {
   }
 
   getByChecksum(checksum: string) {
-    const routesPath = path.join(
-      `${this.dirPath}/${this.folderName}`,
-      'routes.json',
-    );
+    const routesPath = path.join(this.dirPath, 'routes.json');
 
     if (!fs.existsSync(routesPath)) {
       return null;
@@ -58,19 +53,13 @@ class Generator {
   }
 
   getLastPayload() {
-    const routesPath = path.join(
-      `${this.dirPath}/${this.folderName}`,
-      'routes.json',
-    );
-
-    if (!fs.existsSync(routesPath)) {
-      return null;
-    }
+    const routesPath = path.join(this.dirPath, 'routes.json');
+    fs.ensureDirSync(path.join(process.cwd(), this.dirPath));
 
     const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
 
     const lastChecksum = fs.readFileSync(
-      path.join(`${this.dirPath}/${this.folderName}`, 'last-checksum.txt'),
+      path.join(this.dirPath, 'last-checksum.txt'),
       {
         encoding: 'utf-8',
       },
@@ -80,8 +69,8 @@ class Generator {
   }
 
   build() {
-    const { dirPath, folderName, paths, limit } = this;
-    fs.mkdirSync(`${dirPath}/${folderName}`, { recursive: true });
+    const { dirPath, paths, limit } = this;
+    fs.ensureDirSync(dirPath);
 
     let routes: {
       [key: string]: {
@@ -90,7 +79,7 @@ class Generator {
       };
     } = {};
 
-    const routesPath = path.join(`${dirPath}/${folderName}`, 'routes.json');
+    const routesPath = path.join(dirPath, 'routes.json');
 
     if (fs.existsSync(routesPath)) {
       routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
@@ -102,13 +91,9 @@ class Generator {
       'hex',
     );
 
-    fs.writeFileSync(
-      path.join(`${dirPath}/${folderName}`, 'last-checksum.txt'),
-      checksumPaths,
-      {
-        encoding: 'utf-8',
-      },
-    );
+    fs.writeFileSync(path.join(dirPath, 'last-checksum.txt'), checksumPaths, {
+      encoding: 'utf-8',
+    });
 
     if (routes[checksumPaths]) {
       return;
@@ -131,7 +116,11 @@ class Generator {
 }
 
 export const generateRoutesOutputPlugin =
-  (options?: { homeWithLastChecksum?: boolean; limit?: number }) =>
+  (options?: {
+    homeWithLastChecksum?: boolean;
+    limit?: number;
+    outputPath?: string;
+  }) =>
   (server: ServerBuildType) => {
     const generator = new Generator();
 
@@ -142,6 +131,8 @@ export const generateRoutesOutputPlugin =
       homeWithLastChecksum = options.homeWithLastChecksum || false;
       limit = options.limit || 30;
     }
+
+    const { outputPath } = options;
 
     const { paths, prefix, app, controllers } = server;
 
@@ -170,7 +161,10 @@ export const generateRoutesOutputPlugin =
       throw new Error('You cannot use /pomme as a route');
     }
 
-    generator.setPaths(formatedPaths).setLimit(limit).build();
+    let gen = generator.setPaths(formatedPaths).setLimit(limit);
+    gen = outputPath ? gen.setDirPath(outputPath) : gen;
+
+    gen.build();
 
     if (homeWithLastChecksum) {
       app.get('/pomme', (req, res) => {
