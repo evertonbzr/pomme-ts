@@ -33,7 +33,7 @@ function _makeField<
       ...middlewares,
       validateField({
         body: bodySchema ?? null,
-        query: querySchema ?? null,
+        query: null,
       }),
     ])
     .setController(

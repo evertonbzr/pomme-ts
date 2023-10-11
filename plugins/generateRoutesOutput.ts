@@ -3,7 +3,7 @@ import path from 'path';
 import crypto from 'node:crypto';
 import { BinaryToTextEncoding } from 'crypto';
 import { ServerBuildType } from '../src/types';
-import { getConstName } from 'src/utils';
+import { getConstName } from '../src/utils';
 
 class Generator {
   private dirPath: string;

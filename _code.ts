@@ -51,12 +51,14 @@ const v1GetTodo = p.route.get({
   path: '/:id',
   querySchema: z.object({
     title: z.string().optional(),
+    page: z.number().optional(),
   }),
   async resolver(input, ctx) {
-    const { title } = input.body;
+    const { id } = input.params;
+    console.log(input.query);
     return [
       {
-        id: '1',
+        id,
         title: 'Todo 1',
       },
     ];
