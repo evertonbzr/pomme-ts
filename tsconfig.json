@@ -21,7 +21,14 @@
     "inlineSourceMap": true,
     "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "./.eslintrc.cjs", "index.ts", "plugins/*"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "./.eslintrc.cjs",
+    "index.ts",
+    "plugins/*",
+    "plugins/generatePublicSpecification/index.ts"
+  ],
   "exclude": ["dist", "node_modules", "_code.ts"],
   "ts-node": {
     "transpileOnly": true

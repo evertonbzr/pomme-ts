@@ -134,7 +134,7 @@ export const generateRoutesOutputPlugin =
 
     const { outputPath } = options;
 
-    const { paths, prefix, app, controllers } = server;
+    const { paths, prefix, app } = server;
 
     const formatedPaths = paths.map((path) => {
       const controllerConst = `<@controller>${getConstName(

@@ -2,13 +2,14 @@ import express from 'express';
 import { p } from './index';
 import { generateRoutesOutputPlugin } from './plugins/generateRoutesOutput';
 import { generateSwaggerOutput } from './plugins/generateSwaggerOutput';
+import { generatePublicSpecification } from './plugins/generatePublicSpecification';
 
 import { z } from 'zod';
 const app = express();
 app.use(express.json());
 
 const v1ListTodos = p.route.get({
-  key: 'v1ListTodos',
+  key: 'listTodos',
   bodySchema: z.object({
     title: z.string(),
   }),
@@ -17,14 +18,14 @@ const v1ListTodos = p.route.get({
     return [
       {
         id: '1',
-        title: 'Todo 1',
+        title,
       },
     ];
   },
 });
 
 const v1CreateTodo = p.route.post({
-  key: 'v1CreateTodo',
+  key: 'createTodo',
   bodySchema: z.object({
     title: z.string(),
   }),
@@ -39,19 +40,11 @@ const v1CreateTodo = p.route.post({
   },
 });
 
-const v1UpdateTodo = p.route.put({
-  key: 'v1UpdateTodo',
-  async resolver({}, _) {
-    return null;
-  },
-});
-
 const v1GetTodo = p.route.get({
-  key: 'v1GetTodo',
+  key: 'getTodo',
   path: '/:id',
   querySchema: z.object({
-    title: z.string().optional(),
-    page: z.number().optional(),
+    include: z.array(z.string()),
   }),
   async resolver(input, ctx) {
     const { id } = input.params;
@@ -68,7 +61,7 @@ const v1GetTodo = p.route.get({
 const todoController = p
   .controller()
   .withPath('/todo')
-  .withRoutes([v1ListTodos, v1GetTodo, v1CreateTodo, v1UpdateTodo])
+  .withRoutes([v1ListTodos, v1GetTodo, v1CreateTodo])
   .build();
 
 const server = p
@@ -79,18 +72,6 @@ const server = p
       homeWithLastChecksum: true,
       limit: 1,
       outputPath: '/generated/routes-output',
-    }),
-    generateSwaggerOutput({
-      openapi: '3.0.0',
-      info: {
-        title: 'Sample API',
-        version: '1.0.0',
-      },
-      servers: [
-        {
-          url: 'http://localhost:3000',
-        },
-      ],
     }),
   ])
   .withControllers([todoController])
