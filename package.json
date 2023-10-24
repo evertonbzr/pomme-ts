@@ -1,6 +1,6 @@
 {
   "name": "pomme-ts",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
     "build": "tsc",
     "dev": "tsx --watch ./_code.ts",
     "test": "NODE_ENV=test vitest",
-    "publish": "tsc && npm publish"
+    "publish-package=": "tsc && npm publish"
   },
   "keywords": [
     "typescript",

@@ -1,5 +1,4 @@
 import express from 'express';
-import 'express-async-errors';
 import { p } from './index';
 import { generateRoutesOutputPlugin } from './plugins/generateRoutesOutput';
 

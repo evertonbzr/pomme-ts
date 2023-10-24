@@ -13,65 +13,65 @@ export class PommeError {
 }
 
 const clientErrors = {
-  badRequest: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 400);
+  badRequest: (message: string) => {
+    throw new PommeError(message, 400);
   },
-  unauthorized: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 401);
+  unauthorized: (message: string) => {
+    throw new PommeError(message, 401);
   },
-  forbidden: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 403);
+  forbidden: (message: string) => {
+    throw new PommeError(message, 403);
   },
-  notFound: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 404);
+  notFound: (message: string) => {
+    throw new PommeError(message, 404);
   },
-  conflict: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 409);
+  conflict: (message: string) => {
+    throw new PommeError(message, 409);
   },
-  tooManyRequests: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 429);
+  tooManyRequests: (message: string) => {
+    throw new PommeError(message, 429);
   },
 };
 
 const serverErrors = {
-  serverError: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 500);
+  serverError: (message: string) => {
+    throw new PommeError(message, 500);
   },
-  notImplemented: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 501);
+  notImplemented: (message: string) => {
+    throw new PommeError(message, 501);
   },
-  badGateway: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 502);
+  badGateway: (message: string) => {
+    throw new PommeError(message, 502);
   },
-  serviceUnavailable: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 503);
+  serviceUnavailable: (message: string) => {
+    throw new PommeError(message, 503);
   },
-  gatewayTimeout: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 504);
+  gatewayTimeout: (message: string) => {
+    throw new PommeError(message, 504);
   },
-  httpVersionNotSupported: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 505);
+  httpVersionNotSupported: (message: string) => {
+    throw new PommeError(message, 505);
   },
 };
 
 const redirectErrors = {
-  permanentRedirect: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 308);
+  permanentRedirect: (message: string) => {
+    throw new PommeError(message, 308);
   },
-  temporaryRedirect: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 307);
+  temporaryRedirect: (message: string) => {
+    throw new PommeError(message, 307);
   },
-  seeOther: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 303);
+  seeOther: (message: string) => {
+    throw new PommeError(message, 303);
   },
-  notModified: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 304);
+  notModified: (message: string) => {
+    throw new PommeError(message, 304);
   },
-  useProxy: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 305);
+  useProxy: (message: string) => {
+    throw new PommeError(message, 305);
   },
-  switchProxy: (args: PommeErrorArgs) => {
-    throw new PommeError(args.message, 306);
+  switchProxy: (message: string) => {
+    throw new PommeError(message, 306);
   },
 };
 

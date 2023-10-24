@@ -96,8 +96,9 @@ class _MakeServer {
 
     server.app.use((err, req, res, next) => {
       if (err instanceof PommeError) {
-        console.log(err);
         res.status(err.statusCode).json({ error: err.message });
+      } else if (err) {
+        res.status(500).json({ error: err.message });
       }
       next();
     });
