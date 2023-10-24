@@ -12,7 +12,7 @@
     "build": "tsc",
     "dev": "tsx --watch ./_code.ts",
     "test": "NODE_ENV=test vitest",
-    "publish-package=": "tsc && npm publish"
+    "publish-package": "tsc && npm publish"
   },
   "keywords": [
     "typescript",
