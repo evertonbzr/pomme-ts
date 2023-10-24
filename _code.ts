@@ -1,24 +1,20 @@
 import express from 'express';
+import 'express-async-errors';
 import { p } from './index';
 import { generateRoutesOutputPlugin } from './plugins/generateRoutesOutput';
-import { generateSwaggerOutput } from './plugins/generateSwaggerOutput';
-import { generatePublicSpecification } from './plugins/generatePublicSpecification';
 
 import { z } from 'zod';
 const app = express();
+
 app.use(express.json());
 
 const v1ListTodos = p.route.get({
   key: 'listTodos',
-  bodySchema: z.object({
-    title: z.string(),
-  }),
   async resolver(input, ctx) {
-    const { title } = input.body;
+    p.error.notFound({ message: 'Not found' });
     return [
       {
         id: '1',
-        title,
       },
     ];
   },
@@ -44,7 +40,7 @@ const v1GetTodo = p.route.get({
   key: 'getTodo',
   path: '/:id',
   querySchema: z.object({
-    include: z.array(z.string()),
+    include: z.array(z.string()).optional(),
   }),
   async resolver(input, ctx) {
     const { id } = input.params;

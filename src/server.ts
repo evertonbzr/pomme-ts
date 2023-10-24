@@ -2,6 +2,7 @@ import { Express, RequestHandler } from 'express';
 import { bold, cyan, green } from 'kleur/colors';
 import { Controller, Plugin, ServerBuildType } from './types';
 import { error, info } from './logger';
+import { PommeError } from './errors';
 
 class _MakeServer {
   private prefix: string;
@@ -92,6 +93,14 @@ class _MakeServer {
     for (const plugin of this.plugins) {
       plugin(server);
     }
+
+    server.app.use((err, req, res, next) => {
+      if (err instanceof PommeError) {
+        console.log(err);
+        res.status(err.statusCode).json({ error: err.message });
+      }
+      next();
+    });
 
     return server;
   }
