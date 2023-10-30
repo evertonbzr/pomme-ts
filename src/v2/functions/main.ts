@@ -1,5 +1,7 @@
 import { Express } from 'express';
 import { Module } from './module';
+import { MainMetadata } from '../types';
+import { getMetadataStorage } from '../store';
 
 class Main {
   protected modules: Module[];

@@ -1,15 +1,4 @@
-interface ControllerMetadata {
-  pathName: string;
-  routes: any[];
-}
-
-interface MainMetadata {
-  modules: ModuleMetadata[];
-}
-
-interface ModuleMetadata {
-  controllers: ControllerMetadata[];
-}
+import { MainMetadata } from '../types';
 
 class StorageEngine {
   public main: MainMetadata;
@@ -23,7 +12,7 @@ class StorageEngine {
 
 let storage: StorageEngine;
 
-function getMetadataStorage() {
+export function getMetadataStorage() {
   if (!storage) {
     storage = new StorageEngine();
   }

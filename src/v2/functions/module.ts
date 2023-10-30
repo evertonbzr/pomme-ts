@@ -1,13 +1,22 @@
+import { Router } from 'express';
+import { ModuleMetadata } from '../types';
+import { Controller } from './controller';
+
 export class Module {
-  public controllers: ControllerMetadata[] = [];
+  public controllers: Controller[] = [];
+  protected router: Router;
 
-  static create() {
-    return new Module();
+  constructor() {
+    this.router = Router();
   }
-
   public build(): ModuleMetadata {
+    const controllers = this.controllers.map((controller) =>
+      controller.build(),
+    );
+
     return {
-      controllers: [],
+      controllers,
+      router: this.router,
     };
   }
 }
