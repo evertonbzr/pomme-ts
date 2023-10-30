@@ -7,13 +7,21 @@ const app = express();
 
 app.use(express.json());
 
+const querySchema = z.object({
+  page: z
+    .string()
+    .transform((val) => parseInt(val))
+    .default('1'),
+});
+
 const v1ListTodos = p.route.get({
   key: 'listTodos',
+  querySchema,
   async resolver(input, ctx) {
-    p.error.notFound({ message: 'Not found' });
     return [
       {
-        id: '1',
+        id: input.query.page,
+        title: 'Todo 1',
       },
     ];
   },
