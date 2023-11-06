@@ -10,6 +10,13 @@ export class Controller {
     this.router = Router();
   }
 
+  setPath(path: string) {
+    this.pathName = path;
+    return this;
+  }
+
+  setRoutes(routes: any[]) {}
+
   public build(): ControllerMetadata {
     return {
       pathName: this.pathName,
