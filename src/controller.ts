@@ -15,17 +15,17 @@ class Controller {
 		this.router = Router();
 	}
 
-	withPath(path: string) {
-		this.path = path;
-		return this;
-	}
+	// withPath(path: string) {
+	// 	this.path = path;
+	// 	return this;
+	// }
 
-	withRoutes(fields: Field[]) {
+	routes(fields: Field[]) {
 		this.fields = fields;
 		return this;
 	}
 
-	withMiddlewares(middleware: RequestHandler[]) {
+	middlewares(middleware: RequestHandler[]) {
 		this.middleware = middleware;
 		return this;
 	}
