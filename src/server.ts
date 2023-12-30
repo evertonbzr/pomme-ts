@@ -1,114 +1,112 @@
-import { Express, RequestHandler } from 'express';
-import { bold, cyan, green } from 'kleur/colors';
-import { Controller, Plugin, ServerBuildType } from './types';
-import { error, info } from './logger';
-import { PommeError } from './errors';
+import { Express, RequestHandler } from "express";
+import { bold, green } from "kleur/colors";
+import { PommeError } from "./errors";
+import { error, info } from "./logger";
+import { Controller, Plugin, ServerBuildType } from "./types";
 
 class _MakeServer {
-  private prefix: string;
-  private app: Express;
-  private controllers: Controller[];
-  private middlewares: RequestHandler[];
-  private plugins: Plugin[];
+	private prefix: string;
+	private app: Express;
+	private controllers: Controller[];
+	private middlewares: RequestHandler[];
+	private plugins: Plugin[];
 
-  constructor() {
-    this.prefix = '/';
-    this.app = undefined;
-    this.controllers = [];
-    this.middlewares = [];
-    this.plugins = [];
-  }
+	constructor() {
+		this.prefix = "/";
+		this.app = undefined;
+		this.controllers = [];
+		this.middlewares = [];
+		this.plugins = [];
+	}
 
-  withPrefix(prefix: string) {
-    this.prefix = prefix;
-    return this;
-  }
+	withPrefix(prefix: string) {
+		this.prefix = prefix;
+		return this;
+	}
 
-  withPlugins(plugins: Plugin[]) {
-    this.plugins = plugins;
-    return this;
-  }
+	withPlugins(plugins: Plugin[]) {
+		this.plugins = plugins;
+		return this;
+	}
 
-  withApp(app: Express) {
-    this.app = app;
-    return this;
-  }
+	withApp(app: Express) {
+		this.app = app;
+		return this;
+	}
 
-  withControllers(controllers: Controller[]) {
-    this.controllers = controllers;
-    return this;
-  }
+	withControllers(controllers: Controller[]) {
+		this.controllers = controllers;
+		return this;
+	}
 
-  withMiddlewares(middlewares: RequestHandler[]) {
-    this.middlewares = middlewares;
-    return this;
-  }
+	withMiddlewares(middlewares: RequestHandler[]) {
+		this.middlewares = middlewares;
+		return this;
+	}
 
-  build(): ServerBuildType {
-    if (!this.app) {
-      error('RouterBuild requires app.');
-      throw new Error('RouterBuild requires app.');
-    }
+	build(): ServerBuildType {
+		if (!this.app) {
+			error("RouterBuild requires app.");
+			throw new Error("RouterBuild requires app.");
+		}
 
-    const routes = this.controllers.map((controller) => controller.route);
-    const paths = this.controllers
-      .map((controller) => {
-        return controller.paths.map((path) => ({
-          ...path,
-          route: `${controller.key}${path.route}`,
-          controllerPath: controller.key,
-        }));
-      })
-      .flat();
+		const routes = this.controllers.map((controller) => controller.route);
+		const paths = this.controllers.flatMap((controller) => {
+			return controller.paths.map((path) => ({
+				...path,
+				route: `${controller.key}${path.route}`,
+				controllerPath: controller.key,
+			}));
+		});
 
-    const prefix = this.prefix === '/' ? '' : this.prefix;
+		const prefix = this.prefix === "/" ? "" : this.prefix;
 
-    for (const path of paths) {
-      info(`${bold(path.key)} ${green(path.req)} ${prefix}${path.route}`);
-    }
+		for (const path of paths) {
+			info(`${bold(path.key)} ${green(path.req)} ${prefix}${path.route}`);
+		}
 
-    for (const route of routes) {
-      this.app.use(this.prefix, ...this.middlewares, route);
-    }
+		for (const route of routes) {
+			this.app.use(this.prefix, ...this.middlewares, route);
+		}
 
-    const formatedPaths = paths.map(
-      (path) => `${path.req}${prefix}${path.route}`,
-    );
+		const formatedPaths = paths.map(
+			(path) => `${path.req}${prefix}${path.route}`,
+		);
 
-    const pathsDuplicate = formatedPaths.filter(
-      (key, index) => formatedPaths.indexOf(key) !== index,
-    );
+		const pathsDuplicate = formatedPaths.filter(
+			(key, index) => formatedPaths.indexOf(key) !== index,
+		);
 
-    if (pathsDuplicate.length) {
-      throw new Error(`Duplicate routes found: ${pathsDuplicate.join(', ')}`);
-    }
+		if (pathsDuplicate.length) {
+			throw new Error(`Duplicate routes found: ${pathsDuplicate.join(", ")}`);
+		}
 
-    const server = {
-      app: this.app,
-      controllers: this.controllers,
-      paths,
-      prefix,
-    };
+		const server = {
+			app: this.app,
+			controllers: this.controllers,
+			paths,
+			prefix,
+		};
 
-    for (const plugin of this.plugins) {
-      plugin(server);
-    }
+		for (const plugin of this.plugins) {
+			plugin(server);
+		}
 
-    server.app.use((err, req, res, next) => {
-      if (err instanceof PommeError) {
-        res.status(err.statusCode).json({ error: err.message });
-      } else if (err) {
-        res.status(500).json({ error: err.message });
-      }
-      next();
-    });
+		server.app.use((err, req, res, next) => {
+			if (err instanceof PommeError) {
+				res.status(err.statusCode).json({ error: err.message });
+			} else if (err) {
+				res.status(500).json({ error: err.message });
+			}
+			next();
+		});
 
-    return server;
-  }
+		return server;
+	}
 
-  static create() {
-    return new _MakeServer();
-  }
+	static create() {
+		return new _MakeServer();
+	}
 }
 
 export const server = _MakeServer.create;

@@ -5,7 +5,7 @@ export class RouterBuild {
   private path: string | undefined;
   private method: ReqMethod | undefined;
   private middlewares: RequestHandler[];
-  private controller: any;
+  private controller: RequestHandler;
   private router: Router;
 
   constructor() {

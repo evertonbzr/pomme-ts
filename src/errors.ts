@@ -79,7 +79,7 @@ const error = {
   ...clientErrors,
   ...serverErrors,
   ...redirectErrors,
-  custom: (
+  throw: (
     { message, statusCode = 500 }: PommeErrorArgs & { statusCode?: number } = {
       message: 'Internal server error',
     },

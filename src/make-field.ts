@@ -1,32 +1,32 @@
-import { Field, FieldArgs, OmitFieldArgs, ParseZod, ReqMethod } from './types';
-import { Request, Response } from 'express';
-import { validateRequest } from './validate-field';
-import { RouterBuild } from './router-build';
-import { AnyZodObject } from 'zod';
+import { Request, Response } from "express";
+import { AnyZodObject } from "zod";
+import { RouterBuild } from "./router-build";
+import { Field, FieldArgs, OmitFieldArgs, ParseZod, ReqMethod } from "./types";
+import { validateRequest } from "./validate-field";
 
 function _makeField<
-  Body extends AnyZodObject = AnyZodObject,
-  Path extends string = string,
-  Query extends AnyZodObject = AnyZodObject,
+	Body extends AnyZodObject = AnyZodObject,
+	Path extends string = string,
+	Query extends AnyZodObject = AnyZodObject,
 >({
-  reqType,
-  path,
-  resolver,
-  bodySchema,
-  querySchema,
-  key,
-  noMw = false,
-  options = {
-    middlewares: [],
-  },
+	reqType,
+	path,
+	resolver,
+	bodySchema,
+	querySchema,
+	key,
+	noMw = false,
+	options = {
+		middlewares: [],
+	},
 }: FieldArgs<Body, Path, Query>): Field {
-  const routerBuild = new RouterBuild();
+	const routerBuild = new RouterBuild();
 
-  const { middlewares } = options;
+	const { middlewares } = options;
 
-  let pathDefine = path ?? '/';
+	const pathDefine = path ?? "/";
 
-  const router = routerBuild
+	const router = routerBuild
     .setPath(pathDefine)
     .setMethod(reqType)
     .setMiddlewares([
@@ -52,64 +52,64 @@ function _makeField<
     )
     .build();
 
-  return {
-    router,
-    noMw,
-    path: pathDefine,
-    reqType,
-    key,
-    bodySchema,
-    querySchema,
-  };
+	return {
+		router,
+		noMw,
+		path: pathDefine,
+		reqType,
+		key,
+		bodySchema,
+		querySchema,
+	};
 }
 
 export const route = {
-  withMethod: <
-    Body extends AnyZodObject = AnyZodObject,
-    Path extends string = string,
-    Query extends AnyZodObject = AnyZodObject,
-  >(
-    reqType: ReqMethod,
-    options: OmitFieldArgs<Body, Path, Query>,
-  ) => _makeField<Body, Path, Query>({ ...options, reqType }),
+	withMethod: <
+		Body extends AnyZodObject = AnyZodObject,
+		Path extends string = string,
+		Query extends AnyZodObject = AnyZodObject,
+	>(
+		reqType: ReqMethod,
+		options: OmitFieldArgs<Body, Path, Query>,
+	) => _makeField<Body, Path, Query>({ ...options, reqType }),
 
-  get: <
-    Body extends AnyZodObject = AnyZodObject,
-    Path extends string = string,
-    Query extends AnyZodObject = AnyZodObject,
-  >(
-    options: OmitFieldArgs<Body, Path, Query>,
-  ) => route.withMethod<Body, Path, Query>('GET', options),
+	get: <
+		Body extends AnyZodObject = AnyZodObject,
+		Path extends string = string,
+		Query extends AnyZodObject = AnyZodObject,
+	>(
+		options: OmitFieldArgs<Body, Path, Query>,
+	) => route.withMethod<Body, Path, Query>("GET", options),
 
-  post: <
-    Body extends AnyZodObject = AnyZodObject,
-    Path extends string = string,
-    Query extends AnyZodObject = AnyZodObject,
-  >(
-    options: OmitFieldArgs<Body, Path, Query>,
-  ) => route.withMethod<Body, Path, Query>('POST', options),
+	post: <
+		Body extends AnyZodObject = AnyZodObject,
+		Path extends string = string,
+		Query extends AnyZodObject = AnyZodObject,
+	>(
+		options: OmitFieldArgs<Body, Path, Query>,
+	) => route.withMethod<Body, Path, Query>("POST", options),
 
-  put: <
-    Body extends AnyZodObject = AnyZodObject,
-    Path extends string = string,
-    Query extends AnyZodObject = AnyZodObject,
-  >(
-    options: OmitFieldArgs<Body, Path, Query>,
-  ) => route.withMethod<Body, Path, Query>('PUT', options),
+	put: <
+		Body extends AnyZodObject = AnyZodObject,
+		Path extends string = string,
+		Query extends AnyZodObject = AnyZodObject,
+	>(
+		options: OmitFieldArgs<Body, Path, Query>,
+	) => route.withMethod<Body, Path, Query>("PUT", options),
 
-  delete: <
-    Body extends AnyZodObject = AnyZodObject,
-    Path extends string = string,
-    Query extends AnyZodObject = AnyZodObject,
-  >(
-    options: OmitFieldArgs<Body, Path, Query>,
-  ) => route.withMethod<Body, Path, Query>('DELETE', options),
+	delete: <
+		Body extends AnyZodObject = AnyZodObject,
+		Path extends string = string,
+		Query extends AnyZodObject = AnyZodObject,
+	>(
+		options: OmitFieldArgs<Body, Path, Query>,
+	) => route.withMethod<Body, Path, Query>("DELETE", options),
 
-  patch: <
-    Body extends AnyZodObject = AnyZodObject,
-    Path extends string = string,
-    Query extends AnyZodObject = AnyZodObject,
-  >(
-    options: OmitFieldArgs<Body, Path, Query>,
-  ) => route.withMethod<Body, Path, Query>('PATCH', options),
+	patch: <
+		Body extends AnyZodObject = AnyZodObject,
+		Path extends string = string,
+		Query extends AnyZodObject = AnyZodObject,
+	>(
+		options: OmitFieldArgs<Body, Path, Query>,
+	) => route.withMethod<Body, Path, Query>("PATCH", options),
 };
