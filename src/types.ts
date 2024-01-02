@@ -58,6 +58,14 @@ export type Path = {
 	querySchema?: string;
 };
 
+export type RouteDefinition = {
+	path: string;
+	method: ReqMethod;
+	key: string;
+	bodySchema?: string;
+	querySchema?: string;
+};
+
 export type Controller = {
 	key: string;
 	route: Router;

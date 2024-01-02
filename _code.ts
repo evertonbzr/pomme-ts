@@ -1,5 +1,5 @@
 import express from "express";
-import { p } from "./index";
+import { getStorage, p } from "./index";
 import { generateRoutesOutputPlugin } from "./plugins/generateRoutesOutput";
 
 import { z } from "zod";
@@ -78,6 +78,10 @@ const server = p
 	])
 	.controllers([todoController])
 	.build();
+
+setTimeout(() => {
+	console.log("routes", getStorage().routes);
+}, 3000);
 
 app.listen(3000, () => {
 	console.log("Server started on port 3000");

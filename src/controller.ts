@@ -10,15 +10,11 @@ class Controller {
 
 	constructor(path = "/") {
 		this.path = path;
+		this.path = path.startsWith("/") ? path : `/${path}`;
 		this.fields = [];
 		this.middleware = [];
 		this.router = Router();
 	}
-
-	// withPath(path: string) {
-	// 	this.path = path;
-	// 	return this;
-	// }
 
 	routes(fields: Field[]) {
 		this.fields = fields;
@@ -36,7 +32,7 @@ class Controller {
 		}
 
 		const fieldsSorted = this.fields.sort((a) => {
-			if (a.noMw) return -1;
+			if (a.noImportMiddleware) return -1;
 			return 0;
 		});
 
@@ -62,7 +58,7 @@ class Controller {
 		});
 
 		for (const field of fieldsSorted) {
-			if (!field.noMw) {
+			if (!field.noImportMiddleware) {
 				this.router.use(this.path, ...this.middleware, field.router);
 			} else {
 				this.router.use(this.path, field.router);

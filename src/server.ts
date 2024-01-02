@@ -2,6 +2,7 @@ import { Express, RequestHandler } from "express";
 import { bold, green } from "kleur/colors";
 import { PommeError } from "./errors";
 import { error, info } from "./logger";
+import { getStorage } from "./store";
 import { Controller, Plugin, ServerBuildType } from "./types";
 
 class _MakeServer {
@@ -56,7 +57,16 @@ class _MakeServer {
 
 		const prefix = this.prefix === "/" ? "" : this.prefix;
 
+		console.log("paths", paths);
+
 		for (const path of paths) {
+			getStorage().routes.push({
+				key: path.key,
+				path: path.route,
+				method: path.req as any,
+				...(path.bodySchema && { bodySchema: path.bodySchema }),
+				...(path.querySchema && { querySchema: path.querySchema }),
+			});
 			info(`${bold(path.key)} ${green(path.req)} ${prefix}${path.route}`);
 		}
 
@@ -78,7 +88,7 @@ class _MakeServer {
 
 		const server = {
 			app: this.app,
-			controllers: this.controllers,
+			controllers: this._controllers,
 			paths,
 			prefix,
 		};
