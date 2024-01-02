@@ -57,8 +57,6 @@ class _MakeServer {
 
 		const prefix = this.prefix === "/" ? "" : this.prefix;
 
-		console.log("paths", paths);
-
 		for (const path of paths) {
 			getStorage().routes.push({
 				key: path.key,
