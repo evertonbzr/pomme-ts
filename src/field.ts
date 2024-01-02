@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 import { AnyZodObject } from "zod";
 import { RouterBuild } from "./router-build";
 import { Field, FieldArgs, OmitFieldArgs, ParseZod, ReqMethod } from "./types";
@@ -15,16 +15,14 @@ function _makeField<
 	bodySchema,
 	querySchema,
 	key,
-	noMw = false,
-	options = {
-		middlewares: [],
-	},
+	noImportMiddleware = false,
+	middlewares = [],
 }: FieldArgs<Body, Path, Query>): Field {
 	const routerBuild = new RouterBuild();
 
-	const { middlewares } = options;
+	let pathDefine = path ?? "/";
 
-	const pathDefine = path ?? "/";
+	pathDefine = pathDefine.startsWith("/") ? pathDefine : `/${pathDefine}`;
 
 	const router = routerBuild
     .setPath(pathDefine)
@@ -38,23 +36,23 @@ function _makeField<
     ])
     .setController(
       async (
-        req: Request<any, {}, ParseZod<Body>, ParseZod<Query>>,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+req: Request<any, {}, ParseZod<Body>, ParseZod<Query>>,
         res: Response,
       ) => {
         const { body, params, query } = req;
 
         const response = await resolver({ body, params, query }, req);
 
-        res.json({
-          data: response,
-        });
+        res.json(response);
       },
     )
     .build();
 
 	return {
 		router,
-		noMw,
+		noImportMiddleware,
 		path: pathDefine,
 		reqType,
 		key,
@@ -63,6 +61,9 @@ function _makeField<
 	};
 }
 
+/**
+ * Represents a route build.
+ */
 export const route = {
 	withMethod: <
 		Body extends AnyZodObject = AnyZodObject,
@@ -113,3 +114,10 @@ export const route = {
 		options: OmitFieldArgs<Body, Path, Query>,
 	) => route.withMethod<Body, Path, Query>("PATCH", options),
 };
+
+route.get({
+	key: "listTodos",
+	async resolver(input, ctx) {
+		return {};
+	},
+});

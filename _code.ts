@@ -68,16 +68,15 @@ const todoController = p
 	.build();
 
 const server = p
-	.server()
-	.withApp(app)
-	.withPlugins([
+	.server(app)
+	.plugins([
 		generateRoutesOutputPlugin({
 			homeWithLastChecksum: true,
 			limit: 1,
 			outputPath: "/generated/routes-output",
 		}),
 	])
-	.withControllers([todoController])
+	.controllers([todoController])
 	.build();
 
 app.listen(3000, () => {

@@ -7,16 +7,16 @@ import { Controller, Plugin, ServerBuildType } from "./types";
 class _MakeServer {
 	private prefix: string;
 	private app: Express;
-	private controllers: Controller[];
+	private _controllers: Controller[];
 	private middlewares: RequestHandler[];
-	private plugins: Plugin[];
+	private _plugins: Plugin[];
 
-	constructor() {
+	constructor(app: Express) {
 		this.prefix = "/";
-		this.app = undefined;
-		this.controllers = [];
+		this.app = app;
+		this._controllers = [];
 		this.middlewares = [];
-		this.plugins = [];
+		this._plugins = [];
 	}
 
 	withPrefix(prefix: string) {
@@ -24,18 +24,13 @@ class _MakeServer {
 		return this;
 	}
 
-	withPlugins(plugins: Plugin[]) {
-		this.plugins = plugins;
+	plugins(plugins: Plugin[]) {
+		this._plugins = plugins;
 		return this;
 	}
 
-	withApp(app: Express) {
-		this.app = app;
-		return this;
-	}
-
-	withControllers(controllers: Controller[]) {
-		this.controllers = controllers;
+	controllers(controllers: Controller[]) {
+		this._controllers = controllers;
 		return this;
 	}
 
@@ -50,8 +45,8 @@ class _MakeServer {
 			throw new Error("RouterBuild requires app.");
 		}
 
-		const routes = this.controllers.map((controller) => controller.route);
-		const paths = this.controllers.flatMap((controller) => {
+		const routes = this._controllers.map((controller) => controller.route);
+		const paths = this._controllers.flatMap((controller) => {
 			return controller.paths.map((path) => ({
 				...path,
 				route: `${controller.key}${path.route}`,
@@ -88,7 +83,7 @@ class _MakeServer {
 			prefix,
 		};
 
-		for (const plugin of this.plugins) {
+		for (const plugin of this._plugins) {
 			plugin(server);
 		}
 
@@ -104,8 +99,8 @@ class _MakeServer {
 		return server;
 	}
 
-	static create() {
-		return new _MakeServer();
+	static create(app: Express) {
+		return new _MakeServer(app);
 	}
 }
 
